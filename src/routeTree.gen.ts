@@ -10,33 +10,88 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AssistantRouteImport } from './routes/assistant'
+import { Route as CollaborateursRouteImport } from './routes/collaborateurs'
+import { Route as RecrutementRouteImport } from './routes/recrutement'
+import { Route as CollaborateursIdRouteImport } from './routes/collaborateurs.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AssistantRoute = AssistantRouteImport.update({
+  id: '/assistant',
+  path: '/assistant',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollaborateursRoute = CollaborateursRouteImport.update({
+  id: '/collaborateurs',
+  path: '/collaborateurs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecrutementRoute = RecrutementRouteImport.update({
+  id: '/recrutement',
+  path: '/recrutement',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollaborateursIdRoute = CollaborateursIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => CollaborateursRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/assistant': typeof AssistantRoute
+  '/collaborateurs': typeof CollaborateursRouteWithChildren
+  '/recrutement': typeof RecrutementRoute
+  '/collaborateurs/$id': typeof CollaborateursIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/assistant': typeof AssistantRoute
+  '/collaborateurs': typeof CollaborateursRouteWithChildren
+  '/recrutement': typeof RecrutementRoute
+  '/collaborateurs/$id': typeof CollaborateursIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/assistant': typeof AssistantRoute
+  '/collaborateurs': typeof CollaborateursRouteWithChildren
+  '/recrutement': typeof RecrutementRoute
+  '/collaborateurs/$id': typeof CollaborateursIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/assistant'
+    | '/collaborateurs'
+    | '/recrutement'
+    | '/collaborateurs/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/assistant'
+    | '/collaborateurs'
+    | '/recrutement'
+    | '/collaborateurs/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/assistant'
+    | '/collaborateurs'
+    | '/recrutement'
+    | '/collaborateurs/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AssistantRoute: typeof AssistantRoute
+  CollaborateursRoute: typeof CollaborateursRouteWithChildren
+  RecrutementRoute: typeof RecrutementRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +103,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/assistant': {
+      id: '/assistant'
+      path: '/assistant'
+      fullPath: '/assistant'
+      preLoaderRoute: typeof AssistantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collaborateurs': {
+      id: '/collaborateurs'
+      path: '/collaborateurs'
+      fullPath: '/collaborateurs'
+      preLoaderRoute: typeof CollaborateursRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recrutement': {
+      id: '/recrutement'
+      path: '/recrutement'
+      fullPath: '/recrutement'
+      preLoaderRoute: typeof RecrutementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collaborateurs/$id': {
+      id: '/collaborateurs/$id'
+      path: '/$id'
+      fullPath: '/collaborateurs/$id'
+      preLoaderRoute: typeof CollaborateursIdRouteImport
+      parentRoute: typeof CollaborateursRoute
+    }
   }
 }
 
+interface CollaborateursRouteChildren {
+  CollaborateursIdRoute: typeof CollaborateursIdRoute
+}
+
+const CollaborateursRouteChildren: CollaborateursRouteChildren = {
+  CollaborateursIdRoute: CollaborateursIdRoute,
+}
+
+const CollaborateursRouteWithChildren = CollaborateursRoute._addFileChildren(
+  CollaborateursRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AssistantRoute: AssistantRoute,
+  CollaborateursRoute: CollaborateursRouteWithChildren,
+  RecrutementRoute: RecrutementRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
