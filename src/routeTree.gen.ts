@@ -12,7 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as CollaborateursRouteImport } from './routes/collaborateurs'
+import { Route as CongesRouteImport } from './routes/conges'
+import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as RecrutementRouteImport } from './routes/recrutement'
+import { Route as SheetsRouteImport } from './routes/sheets'
+import { Route as VeilleJuridiqueRouteImport } from './routes/veille-juridique'
 import { Route as CollaborateursIdRouteImport } from './routes/collaborateurs.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -30,9 +34,29 @@ const CollaborateursRoute = CollaborateursRouteImport.update({
   path: '/collaborateurs',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CongesRoute = CongesRouteImport.update({
+  id: '/conges',
+  path: '/conges',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocumentsRoute = DocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RecrutementRoute = RecrutementRouteImport.update({
   id: '/recrutement',
   path: '/recrutement',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SheetsRoute = SheetsRouteImport.update({
+  id: '/sheets',
+  path: '/sheets',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VeilleJuridiqueRoute = VeilleJuridiqueRouteImport.update({
+  id: '/veille-juridique',
+  path: '/veille-juridique',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CollaborateursIdRoute = CollaborateursIdRouteImport.update({
@@ -45,14 +69,22 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
   '/collaborateurs': typeof CollaborateursRouteWithChildren
+  '/conges': typeof CongesRoute
+  '/documents': typeof DocumentsRoute
   '/recrutement': typeof RecrutementRoute
+  '/sheets': typeof SheetsRoute
+  '/veille-juridique': typeof VeilleJuridiqueRoute
   '/collaborateurs/$id': typeof CollaborateursIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
   '/collaborateurs': typeof CollaborateursRouteWithChildren
+  '/conges': typeof CongesRoute
+  '/documents': typeof DocumentsRoute
   '/recrutement': typeof RecrutementRoute
+  '/sheets': typeof SheetsRoute
+  '/veille-juridique': typeof VeilleJuridiqueRoute
   '/collaborateurs/$id': typeof CollaborateursIdRoute
 }
 export interface FileRoutesById {
@@ -60,7 +92,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
   '/collaborateurs': typeof CollaborateursRouteWithChildren
+  '/conges': typeof CongesRoute
+  '/documents': typeof DocumentsRoute
   '/recrutement': typeof RecrutementRoute
+  '/sheets': typeof SheetsRoute
+  '/veille-juridique': typeof VeilleJuridiqueRoute
   '/collaborateurs/$id': typeof CollaborateursIdRoute
 }
 export interface FileRouteTypes {
@@ -69,21 +105,33 @@ export interface FileRouteTypes {
     | '/'
     | '/assistant'
     | '/collaborateurs'
+    | '/conges'
+    | '/documents'
     | '/recrutement'
+    | '/sheets'
+    | '/veille-juridique'
     | '/collaborateurs/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/assistant'
     | '/collaborateurs'
+    | '/conges'
+    | '/documents'
     | '/recrutement'
+    | '/sheets'
+    | '/veille-juridique'
     | '/collaborateurs/$id'
   id:
     | '__root__'
     | '/'
     | '/assistant'
     | '/collaborateurs'
+    | '/conges'
+    | '/documents'
     | '/recrutement'
+    | '/sheets'
+    | '/veille-juridique'
     | '/collaborateurs/$id'
   fileRoutesById: FileRoutesById
 }
@@ -91,7 +139,11 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AssistantRoute: typeof AssistantRoute
   CollaborateursRoute: typeof CollaborateursRouteWithChildren
+  CongesRoute: typeof CongesRoute
+  DocumentsRoute: typeof DocumentsRoute
   RecrutementRoute: typeof RecrutementRoute
+  SheetsRoute: typeof SheetsRoute
+  VeilleJuridiqueRoute: typeof VeilleJuridiqueRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -117,11 +169,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CollaborateursRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/conges': {
+      id: '/conges'
+      path: '/conges'
+      fullPath: '/conges'
+      preLoaderRoute: typeof CongesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/documents': {
+      id: '/documents'
+      path: '/documents'
+      fullPath: '/documents'
+      preLoaderRoute: typeof DocumentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/recrutement': {
       id: '/recrutement'
       path: '/recrutement'
       fullPath: '/recrutement'
       preLoaderRoute: typeof RecrutementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sheets': {
+      id: '/sheets'
+      path: '/sheets'
+      fullPath: '/sheets'
+      preLoaderRoute: typeof SheetsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/veille-juridique': {
+      id: '/veille-juridique'
+      path: '/veille-juridique'
+      fullPath: '/veille-juridique'
+      preLoaderRoute: typeof VeilleJuridiqueRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/collaborateurs/$id': {
@@ -150,7 +230,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AssistantRoute: AssistantRoute,
   CollaborateursRoute: CollaborateursRouteWithChildren,
+  CongesRoute: CongesRoute,
+  DocumentsRoute: DocumentsRoute,
   RecrutementRoute: RecrutementRoute,
+  SheetsRoute: SheetsRoute,
+  VeilleJuridiqueRoute: VeilleJuridiqueRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
