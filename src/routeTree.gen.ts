@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as CollaborateursRouteImport } from './routes/collaborateurs'
+import { Route as CongesRouteImport } from './routes/conges'
 import { Route as RecrutementRouteImport } from './routes/recrutement'
 import { Route as CollaborateursIdRouteImport } from './routes/collaborateurs.$id'
 
@@ -30,6 +31,11 @@ const CollaborateursRoute = CollaborateursRouteImport.update({
   path: '/collaborateurs',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CongesRoute = CongesRouteImport.update({
+  id: '/conges',
+  path: '/conges',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RecrutementRoute = RecrutementRouteImport.update({
   id: '/recrutement',
   path: '/recrutement',
@@ -45,6 +51,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
   '/collaborateurs': typeof CollaborateursRouteWithChildren
+  '/conges': typeof CongesRoute
   '/recrutement': typeof RecrutementRoute
   '/collaborateurs/$id': typeof CollaborateursIdRoute
 }
@@ -52,6 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
   '/collaborateurs': typeof CollaborateursRouteWithChildren
+  '/conges': typeof CongesRoute
   '/recrutement': typeof RecrutementRoute
   '/collaborateurs/$id': typeof CollaborateursIdRoute
 }
@@ -60,6 +68,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
   '/collaborateurs': typeof CollaborateursRouteWithChildren
+  '/conges': typeof CongesRoute
   '/recrutement': typeof RecrutementRoute
   '/collaborateurs/$id': typeof CollaborateursIdRoute
 }
@@ -69,6 +78,7 @@ export interface FileRouteTypes {
     | '/'
     | '/assistant'
     | '/collaborateurs'
+    | '/conges'
     | '/recrutement'
     | '/collaborateurs/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -76,6 +86,7 @@ export interface FileRouteTypes {
     | '/'
     | '/assistant'
     | '/collaborateurs'
+    | '/conges'
     | '/recrutement'
     | '/collaborateurs/$id'
   id:
@@ -83,6 +94,7 @@ export interface FileRouteTypes {
     | '/'
     | '/assistant'
     | '/collaborateurs'
+    | '/conges'
     | '/recrutement'
     | '/collaborateurs/$id'
   fileRoutesById: FileRoutesById
@@ -91,6 +103,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AssistantRoute: typeof AssistantRoute
   CollaborateursRoute: typeof CollaborateursRouteWithChildren
+  CongesRoute: typeof CongesRoute
   RecrutementRoute: typeof RecrutementRoute
 }
 
@@ -115,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/collaborateurs'
       fullPath: '/collaborateurs'
       preLoaderRoute: typeof CollaborateursRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conges': {
+      id: '/conges'
+      path: '/conges'
+      fullPath: '/conges'
+      preLoaderRoute: typeof CongesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/recrutement': {
@@ -150,6 +170,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AssistantRoute: AssistantRoute,
   CollaborateursRoute: CollaborateursRouteWithChildren,
+  CongesRoute: CongesRoute,
   RecrutementRoute: RecrutementRoute,
 }
 export const routeTree = rootRouteImport
