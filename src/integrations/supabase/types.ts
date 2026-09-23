@@ -924,6 +924,209 @@ export type Database = {
         }
         Relationships: []
       }
+      weekly_report_exports: {
+        Row: {
+          confirmed_by: string | null
+          created_at: string
+          error_detail: string | null
+          external_id: string | null
+          external_url: string | null
+          id: string
+          org_id: string
+          report_id: string
+          requested_by: string
+          status: string
+          target: string
+          updated_at: string
+        }
+        Insert: {
+          confirmed_by?: string | null
+          created_at?: string
+          error_detail?: string | null
+          external_id?: string | null
+          external_url?: string | null
+          id?: string
+          org_id: string
+          report_id: string
+          requested_by: string
+          status?: string
+          target?: string
+          updated_at?: string
+        }
+        Update: {
+          confirmed_by?: string | null
+          created_at?: string
+          error_detail?: string | null
+          external_id?: string | null
+          external_url?: string | null
+          id?: string
+          org_id?: string
+          report_id?: string
+          requested_by?: string
+          status?: string
+          target?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_report_exports_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "weekly_report_exports_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      weekly_report_metrics: {
+        Row: {
+          comparison_note: string | null
+          created_at: string
+          definition: string
+          denominator: number | null
+          detail: Json
+          formula: string
+          id: string
+          key: string
+          label: string
+          numerator: number | null
+          org_id: string
+          previous_value: number | null
+          reliability: string
+          report_id: string
+          source: string
+          unit: string
+          value: number | null
+        }
+        Insert: {
+          comparison_note?: string | null
+          created_at?: string
+          definition: string
+          denominator?: number | null
+          detail?: Json
+          formula: string
+          id?: string
+          key: string
+          label: string
+          numerator?: number | null
+          org_id: string
+          previous_value?: number | null
+          reliability?: string
+          report_id: string
+          source: string
+          unit?: string
+          value?: number | null
+        }
+        Update: {
+          comparison_note?: string | null
+          created_at?: string
+          definition?: string
+          denominator?: number | null
+          detail?: Json
+          formula?: string
+          id?: string
+          key?: string
+          label?: string
+          numerator?: number | null
+          org_id?: string
+          previous_value?: number | null
+          reliability?: string
+          report_id?: string
+          source?: string
+          unit?: string
+          value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_report_metrics_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "weekly_report_metrics_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      weekly_reports: {
+        Row: {
+          author_id: string
+          created_at: string
+          filters: Json
+          id: string
+          is_demo: boolean
+          org_id: string
+          period_end: string
+          period_label: string
+          period_start: string
+          previous_end: string | null
+          previous_start: string | null
+          sources: string[]
+          status: string
+          template: string
+          title: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          author_id: string
+          created_at?: string
+          filters?: Json
+          id?: string
+          is_demo?: boolean
+          org_id: string
+          period_end: string
+          period_label: string
+          period_start: string
+          previous_end?: string | null
+          previous_start?: string | null
+          sources?: string[]
+          status?: string
+          template: string
+          title: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          author_id?: string
+          created_at?: string
+          filters?: Json
+          id?: string
+          is_demo?: boolean
+          org_id?: string
+          period_end?: string
+          period_label?: string
+          period_start?: string
+          previous_end?: string | null
+          previous_start?: string | null
+          sources?: string[]
+          status?: string
+          template?: string
+          title?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_reports_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
