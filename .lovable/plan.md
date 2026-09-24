@@ -1,47 +1,30 @@
-# MadaRH Compliance — plan de construction
+# Plan de reprise — MadaRH Copilot (mode Build)
 
-## Ce que vous obtiendrez
+Contexte vérifié le 24/09/2026 : solde Lovable de 5,00 crédits (quotidiens rechargés chaque jour), build précédent OK, mais trois routes déclarées dans la navigation n'existent pas encore, ce qui casse la compilation des liens.
 
-Une application RH complète en français pour un administrateur RH à Madagascar, avec une barre latérale, une recherche globale, un assistant RH central et onze espaces de travail. L'application se comporte comme un copilote : elle analyse, propose, montre un aperçu, puis attend votre confirmation avant toute action ou modification.
+## Objectif
+Remettre l'application en état navigable et compilable, puis poursuivre les modules restants par ordre de priorité et selon le budget de crédits disponible.
 
-## Étape 1 — Base visuelle et navigation (immédiat)
+## Étape 1 — Déblocage de la compilation (priorité absolue)
+- Créer `src/routes/integrations.tsx` : état réel des intégrations Slack / Gmail / Google Sheets / GitHub, scopes minimaux, statuts honnêtes (« Non connecté », « Autorisation requise », « Connecté et vérifié » uniquement après test de lecture réel), rappel que GitHub ne stocke jamais de données RH.
+- Créer `src/routes/audit.tsx` : journal d'audit (utilisateur, action, ressource, horodatage, succès/échec), accès aux données sensibles journalisés, historique non modifiable.
+- Créer `src/routes/parametres.tsx` : organisation, rôles, rétention, secrets côté serveur documentés.
+- Corriger les deux accès d'index non sécurisés dans `src/routes/sheets.tsx` (lignes 51-52).
+- Vérifier la compilation et la navigation complète.
 
-- Identité sobre et professionnelle : palette bleu ardoise / vert validation / ambre alerte, typographie lisible, densité « outil de travail ».
-- Barre latérale avec les onze espaces, en-tête avec recherche globale (Ctrl+K), raccourcis clavier, bandeau « Données DEMO ».
-- Bannière juridique permanente : l'information est documentaire et doit être vérifiée sur la source officielle applicable.
-- États de chargement, d'erreur et vides partout ; responsive mobile et bureau.
+## Étape 2 — Module « Rapports RH » (si budget suffisant)
+- Route « Rapports RH » : sélection semaine courante/précédente/période personnalisée, filtres organisation/service/équipe/manager.
+- Brancher le moteur KPI existant (`src/lib/reports/periods.ts`, `src/lib/reports/kpi.ts`) sur les données réelles Lovable Cloud : effectif, recrutements, départs, contrats/documents, congés/absences, tâches, validations.
+- Chaque KPI : valeur, définition, numérateur/dénominateur, formule, source, période, comparaison à la période précédente ; « Voir le calcul » ; aucun pourcentage si dénominateur zéro ; « Données insuffisantes » le cas échéant.
+- Trois modèles : RH détaillé, Manager, Direction ; aperçu avant export ; marque « DONNÉES DE DÉMONSTRATION » si données démo.
+- Historique via `weekly_reports` / `weekly_report_metrics` (migration déjà appliquée) ; RLS par organisation, écriture admin_rh/rh/manager.
+- Boutons « Générer le brouillon » puis « Créer dans Google Slides » : réel uniquement après OAuth Google vérifié + confirmation explicite, sinon « Autorisation requise ». Jamais de lien simulé.
 
-## Étape 2 — Les modules
-
-1. **Tableau de bord** — cartes de synthèse : tâches, validations en attente, alertes, documents manquants, congés en cours, changements juridiques récents.
-2. **Assistant RH** — conversation avec suggestions rapides (congé, maladie, accident du travail, maternité/paternité, formule Google Sheets, contrat, relance, vérification juridique). Chaque réponse cite la règle utilisée ou dit clairement qu'elle ne sait pas.
-3. **Collaborateurs** — liste filtrable, fiche détaillée, documents, statut administratif, historique. Données sensibles (médical, salaire, disciplinaire) masquées par défaut avec révélation tracée.
-4. **Recrutement & onboarding** — checklists par candidat et documents à collecter.
-5. **Contrats & documents** — génération en **brouillon uniquement** : contrat, avenant, attestation, certificat de travail, réponse à démission.
-6. **Congés & absences** — annuel, maternité, paternité, maladie, accident du travail, absence autorisée / non autorisée. Les droits et durées proviennent exclusivement de la bibliothèque juridique, jamais d'une valeur codée en dur.
-7. **Veille juridique** — sources, textes, articles, versions, date de vérification, date d'effet, statut, niveau de confiance, historique, révision avant publication.
-8. **Assistant Google Sheets** — expliquer, corriger, générer une formule, avec aperçu avant toute écriture.
-9. **Intégrations** — Slack, Gmail, Google Sheets : état de connexion, portées minimales affichées, aperçu obligatoire avant envoi ou écriture.
-10. **Audit & sécurité** — rôles, permissions, journal d'audit chronologique, événements sensibles, rétention.
-11. **Paramètres** — organisation, rétention, masquage, préférences.
-
-Un fil conducteur traverse tout : les **propositions d'action**. Toute action externe ou écriture crée une proposition visible (analyse → proposition → aperçu → confirmation → exécution → audit), consultable et confirmable depuis le tableau de bord.
-
-## Étape 3 — Données et backend
-
-Cette première version fonctionne sur un jeu de **données DEMO** explicitement marqué, ce qui permet de valider tout le parcours immédiatement.
-
-Le backend Lovable Cloud (base de données, comptes utilisateurs, fonctions serveur) sera activé dans une seconde passe, avec le schéma complet demandé : organizations, profiles, employees, employee_documents, leave_absences, legal_rules, legal_rule_versions, legal_sources, tasks, action_proposals, audit_logs, integrations, integration_scopes, generated_documents, settings — clés étrangères, contraintes, index, sécurité par ligne et jeu de démonstration. Je vous le proposerai dès que l'interface sera validée, pour éviter de figer un schéma avant d'avoir vu les écrans.
+## Étape 3 — Flux OAuth et tests (selon budget restant)
+- Callbacks OAuth Google/Slack/GitHub côté serveur, secrets dans Réglages → Secrets, tests de santé réels, journal d'audit.
+- Tests : proposition → confirmation → audit, KPI (zéro, données vides), permissions, Google non autorisé, masquage des données sensibles.
 
 ## Détails techniques
-
-- React + TypeScript + Tailwind + shadcn sur TanStack Start ; une route par module.
-- Couche de données isolée (`src/data/`) pour que le passage aux vraies tables ne touche pas les écrans.
-- Aucune clé secrète côté navigateur ; les appels IA et intégrations passeront par des fonctions serveur.
-- README : architecture, sécurité, variables d'environnement, GitHub vs base de production, OAuth, sauvegardes, déploiement.
-- Tests de base sur les flux sensibles : cycle de proposition, masquage des données sensibles, absence de règle juridique codée en dur.
-
-## Hypothèses
-
-- Aucune affirmation juridique du cahier des charges n'est publiée comme vérifiée : chaque règle DEMO porte un statut « à vérifier » et un niveau de confiance.
-- Pas de multi-organisation à ce stade : une organisation DEMO unique.
+- Stack : TanStack Start, React 19, Tailwind v4, shadcn ; fonctions serveur `createServerFn` ; Lovable Cloud (Supabase) pour Auth/PostgreSQL/RLS.
+- Conventions inchangées : propose() → prévisualisation → confirmProposal() → audit ; données sensibles masquées et révélations journalisées ; règles juridiques marquées « à vérifier » ; aucune donnée inventée.
+- Vérification finale : compilation sans erreur, navigation de toutes les routes, requêtes base de données, permissions RLS.
