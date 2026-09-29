@@ -305,7 +305,6 @@ function RapportsPage() {
 
   const report: ComputedReport | null = useMemo(() => {
     if (!data || !periodPair) return null;
-    const { computeReport } = require("@/lib/reports/kpi") as typeof import("@/lib/reports/kpi");
     return computeReport(data.dataset, periodPair.current, periodPair.previous, {
       department: department === "tous" ? null : department,
       site: site === "tous" ? null : site,
