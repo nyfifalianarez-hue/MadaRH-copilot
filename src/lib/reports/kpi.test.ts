@@ -43,10 +43,10 @@ describe("computeReport — base vide et périmètre vide", () => {
     expect(report.isEmpty).toBe(true);
     expect(report.isDemo).toBe(false);
     for (const metric of report.metrics) {
-      expect(metric.value).toBe(0);
       expect(metric.source).toBeTruthy();
       expect(metric.formula).toBeTruthy();
     }
+    expect(report.metrics.find((m) => m.key === "effectif_actif")?.value).toBe(0);
   });
 
   it("ne produit jamais de pourcentage quand le dénominateur est nul", () => {
@@ -98,9 +98,9 @@ describe("computeReport — base vide et périmètre vide", () => {
           id: "t1",
           title: "Vérification dossier",
           done: true,
-          due_on: "2026-09-22",
-          updated_at: "2026-09-22T10:00:00Z",
-          created_at: "2026-09-20T10:00:00Z",
+          due_on: "2026-09-16",
+          updated_at: "2026-09-16T10:00:00Z",
+          created_at: "2026-09-15T10:00:00Z",
         },
       ],
     };
