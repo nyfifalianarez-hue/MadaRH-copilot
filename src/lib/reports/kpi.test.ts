@@ -216,7 +216,7 @@ describe("computeReport — calculs réels sur un jeu de démonstration", () => 
     expect(labels.some((l) => l.includes("1 document(s) expiré(s)"))).toBe(true);
     expect(labels.some((l) => l.includes("1 contrat(s) à échéance"))).toBe(true);
     expect(labels.some((l) => l.includes("1 tâche(s) en retard"))).toBe(true);
-    expect(labels.some((l) => l.includes("demande(s) de congé en attente"))).toBe(false);
+    expect(labels.some((l) => l.includes("1 demande(s) de congé en attente"))).toBe(true);
   });
 
   it("le marqueur démo suit les données marquées comme telles", () => {
