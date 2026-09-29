@@ -31,7 +31,9 @@ export const Route = createFileRoute("/sheets")({
 
 function explain(formula: string): string {
   if (!formula.trim()) return "Collez une formule pour obtenir une explication.";
-  const fns = Array.from(formula.toUpperCase().matchAll(/([A-Z.]{2,})\(/g)).map((m) => m[1]);
+  const fns = Array.from(formula.toUpperCase().matchAll(/([A-Z.]{2,})\(/g)).flatMap((m) =>
+    m[1] ? [m[1]] : [],
+  );
   const unique = Array.from(new Set(fns));
   const known: Record<string, string> = {
     SOMME: "additionne une plage de valeurs",
