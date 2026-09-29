@@ -358,7 +358,9 @@ function RapportsPage() {
       const result = await saveFn({
         template,
         preset,
-        custom: preset === "personnalisee" ? { start: customStart, end: customEnd } : undefined,
+        ...(preset === "personnalisee"
+          ? { custom: { start: customStart, end: customEnd } }
+          : {}),
         filters: {
           department: department === "tous" ? null : department,
           site: site === "tous" ? null : site,
