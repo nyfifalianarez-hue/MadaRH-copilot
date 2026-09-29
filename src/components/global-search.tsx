@@ -16,6 +16,7 @@ import { useStore } from "@/data/store";
 const pages = [
   { label: "Tableau de bord", to: "/" },
   { label: "Assistant RH", to: "/assistant" },
+  { label: "Rapports RH", to: "/rapports" },
   { label: "Collaborateurs", to: "/collaborateurs" },
   { label: "Recrutement & onboarding", to: "/recrutement" },
   { label: "Congés & absences", to: "/conges" },

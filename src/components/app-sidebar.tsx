@@ -1,5 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
+  BarChart3,
   BookOpenCheck,
   CalendarDays,
   FileText,
@@ -35,6 +36,7 @@ const groups = [
     items: [
       { title: "Tableau de bord", url: "/", icon: LayoutDashboard },
       { title: "Assistant RH", url: "/assistant", icon: MessageSquare },
+      { title: "Rapports RH", url: "/rapports", icon: BarChart3 },
     ],
   },
   {

@@ -11,9 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AssistantRouteImport } from './routes/assistant'
+import { Route as AuditRouteImport } from './routes/audit'
 import { Route as CollaborateursRouteImport } from './routes/collaborateurs'
 import { Route as CongesRouteImport } from './routes/conges'
 import { Route as DocumentsRouteImport } from './routes/documents'
+import { Route as IntegrationsRouteImport } from './routes/integrations'
+import { Route as ParametresRouteImport } from './routes/parametres'
+import { Route as RapportsRouteImport } from './routes/rapports'
 import { Route as RecrutementRouteImport } from './routes/recrutement'
 import { Route as SheetsRouteImport } from './routes/sheets'
 import { Route as VeilleJuridiqueRouteImport } from './routes/veille-juridique'
@@ -29,6 +33,11 @@ const AssistantRoute = AssistantRouteImport.update({
   path: '/assistant',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuditRoute = AuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CollaborateursRoute = CollaborateursRouteImport.update({
   id: '/collaborateurs',
   path: '/collaborateurs',
@@ -42,6 +51,21 @@ const CongesRoute = CongesRouteImport.update({
 const DocumentsRoute = DocumentsRouteImport.update({
   id: '/documents',
   path: '/documents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IntegrationsRoute = IntegrationsRouteImport.update({
+  id: '/integrations',
+  path: '/integrations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ParametresRoute = ParametresRouteImport.update({
+  id: '/parametres',
+  path: '/parametres',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RapportsRoute = RapportsRouteImport.update({
+  id: '/rapports',
+  path: '/rapports',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RecrutementRoute = RecrutementRouteImport.update({
@@ -68,9 +92,13 @@ const CollaborateursIdRoute = CollaborateursIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
+  '/audit': typeof AuditRoute
   '/collaborateurs': typeof CollaborateursRouteWithChildren
   '/conges': typeof CongesRoute
   '/documents': typeof DocumentsRoute
+  '/integrations': typeof IntegrationsRoute
+  '/parametres': typeof ParametresRoute
+  '/rapports': typeof RapportsRoute
   '/recrutement': typeof RecrutementRoute
   '/sheets': typeof SheetsRoute
   '/veille-juridique': typeof VeilleJuridiqueRoute
@@ -79,9 +107,13 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
+  '/audit': typeof AuditRoute
   '/collaborateurs': typeof CollaborateursRouteWithChildren
   '/conges': typeof CongesRoute
   '/documents': typeof DocumentsRoute
+  '/integrations': typeof IntegrationsRoute
+  '/parametres': typeof ParametresRoute
+  '/rapports': typeof RapportsRoute
   '/recrutement': typeof RecrutementRoute
   '/sheets': typeof SheetsRoute
   '/veille-juridique': typeof VeilleJuridiqueRoute
@@ -91,9 +123,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
+  '/audit': typeof AuditRoute
   '/collaborateurs': typeof CollaborateursRouteWithChildren
   '/conges': typeof CongesRoute
   '/documents': typeof DocumentsRoute
+  '/integrations': typeof IntegrationsRoute
+  '/parametres': typeof ParametresRoute
+  '/rapports': typeof RapportsRoute
   '/recrutement': typeof RecrutementRoute
   '/sheets': typeof SheetsRoute
   '/veille-juridique': typeof VeilleJuridiqueRoute
@@ -104,9 +140,13 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/assistant'
+    | '/audit'
     | '/collaborateurs'
     | '/conges'
     | '/documents'
+    | '/integrations'
+    | '/parametres'
+    | '/rapports'
     | '/recrutement'
     | '/sheets'
     | '/veille-juridique'
@@ -115,9 +155,13 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/assistant'
+    | '/audit'
     | '/collaborateurs'
     | '/conges'
     | '/documents'
+    | '/integrations'
+    | '/parametres'
+    | '/rapports'
     | '/recrutement'
     | '/sheets'
     | '/veille-juridique'
@@ -126,9 +170,13 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/assistant'
+    | '/audit'
     | '/collaborateurs'
     | '/conges'
     | '/documents'
+    | '/integrations'
+    | '/parametres'
+    | '/rapports'
     | '/recrutement'
     | '/sheets'
     | '/veille-juridique'
@@ -138,9 +186,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AssistantRoute: typeof AssistantRoute
+  AuditRoute: typeof AuditRoute
   CollaborateursRoute: typeof CollaborateursRouteWithChildren
   CongesRoute: typeof CongesRoute
   DocumentsRoute: typeof DocumentsRoute
+  IntegrationsRoute: typeof IntegrationsRoute
+  ParametresRoute: typeof ParametresRoute
+  RapportsRoute: typeof RapportsRoute
   RecrutementRoute: typeof RecrutementRoute
   SheetsRoute: typeof SheetsRoute
   VeilleJuridiqueRoute: typeof VeilleJuridiqueRoute
@@ -162,6 +214,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AssistantRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/audit': {
+      id: '/audit'
+      path: '/audit'
+      fullPath: '/audit'
+      preLoaderRoute: typeof AuditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/collaborateurs': {
       id: '/collaborateurs'
       path: '/collaborateurs'
@@ -181,6 +240,27 @@ declare module '@tanstack/react-router' {
       path: '/documents'
       fullPath: '/documents'
       preLoaderRoute: typeof DocumentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/integrations': {
+      id: '/integrations'
+      path: '/integrations'
+      fullPath: '/integrations'
+      preLoaderRoute: typeof IntegrationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parametres': {
+      id: '/parametres'
+      path: '/parametres'
+      fullPath: '/parametres'
+      preLoaderRoute: typeof ParametresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rapports': {
+      id: '/rapports'
+      path: '/rapports'
+      fullPath: '/rapports'
+      preLoaderRoute: typeof RapportsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/recrutement': {
@@ -229,9 +309,13 @@ const CollaborateursRouteWithChildren = CollaborateursRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AssistantRoute: AssistantRoute,
+  AuditRoute: AuditRoute,
   CollaborateursRoute: CollaborateursRouteWithChildren,
   CongesRoute: CongesRoute,
   DocumentsRoute: DocumentsRoute,
+  IntegrationsRoute: IntegrationsRoute,
+  ParametresRoute: ParametresRoute,
+  RapportsRoute: RapportsRoute,
   RecrutementRoute: RecrutementRoute,
   SheetsRoute: SheetsRoute,
   VeilleJuridiqueRoute: VeilleJuridiqueRoute,
