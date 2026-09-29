@@ -543,7 +543,6 @@ function RapportsPage() {
                 <EmptyState
                   title="Aucune donnée disponible pour cette période"
                   description="Aucune ligne ne correspond au périmètre sélectionné dans la base. Aucune valeur n'est estimée ou inventée."
-                  icon={<Database className="size-5 text-muted-foreground" />}
                 />
               ) : (
                 <>
