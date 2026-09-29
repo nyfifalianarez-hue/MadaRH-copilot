@@ -128,7 +128,13 @@ export const saveWeeklyReportDraft = createServerFn({ method: "POST" })
 
     const dataset = await loadDataset(db, context.userId);
     const periodPair = resolvePeriod(data.preset, new Date().toISOString().slice(0, 10), data.custom);
-    const computed = computeReport(dataset, periodPair.current, periodPair.previous, data.filters ?? {});
+    const filters = {
+      department: data.filters?.department ?? null,
+      site: data.filters?.site ?? null,
+      managerId: data.filters?.managerId ?? null,
+      contractType: data.filters?.contractType ?? null,
+    };
+    const computed = computeReport(dataset, periodPair.current, periodPair.previous, filters);
 
     const templateLabels: Record<typeof data.template, string> = {
       rh: "RH (détaillé)",

@@ -48,7 +48,7 @@ interface AuditRow {
 }
 
 function AuditPage() {
-  const fetchLogs = useServerFnStart(fetchAuditLogs);
+  const fetchLogs = useServerFn(fetchAuditLogs);
   const query = useQuery<AuditLogPayload>({ queryKey: ["audit-logs"], queryFn: fetchLogs });
   const [search, setSearch] = useState("");
 

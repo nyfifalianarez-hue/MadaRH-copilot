@@ -6,7 +6,9 @@ import { supabase } from './client'
 
 export const attachSupabaseAuth = createMiddleware({ type: 'function' }).client(
   async ({ next }) => {
-    if (typeof window === 'undefined') return next()
+    if (typeof window === 'undefined') {
+      return next({ context: { headers: new Headers() } })
+    }
 
     const { data } = await supabase.auth.getSession()
     const token = data.session?.access_token
