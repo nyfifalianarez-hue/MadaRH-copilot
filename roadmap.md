@@ -10,7 +10,7 @@
 - [x] Module Rapport hebdomadaire RH : moteur KPI pur, fonctions serveur, écran /rapports
 - [x] Écrans Audit & sécurité, Intégrations, Paramètres (données réelles, états honnêtes)
 - [x] Tests vitest : périodes, KPI (zéro, vides, démo), intégrations (statuts honnêtes)
-- [ ] Vérification finale : compilation, écrans, flux de proposition/confirmation/audit
+- [x] Vérification finale : typecheck OK, 32 tests vitest OK, build OK, 4 écrans vérifiés dans le navigateur (états « Connexion requise » honnêtes sans session)
 
 ## Ouvert
 - Module Rapports : historique détaillé (métriques par rapport), aperçu du brouillon enregistré.
