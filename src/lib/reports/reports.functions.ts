@@ -8,79 +8,85 @@
  * sans source reste « indisponible ».
  */
 import { createServerFn } from "@tanstack/react-start";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 
+import type { Database } from "@/integrations/supabase/types";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { writeAudit } from "@/lib/audit.server";
 
 import { computeReport, type ReportDataset } from "./kpi";
-import { periodPresetLabels, type PeriodPresetId } from "./periods";
+import { periodPresetLabels, resolvePeriod, type Period, type PeriodPresetId } from "./periods";
+
+type AuthedDb = SupabaseClient<Database>;
 
 const EDITOR_ROLES = new Set(["admin_rh", "rh", "manager"]);
 
-interface DatasetPayload {
-  dataset: ReportDataset;
-  orgName: string | null;
-  roles: string[];
-  canEdit: boolean;
+async function loadDataset(db: AuthedDb, userId: string): Promise<ReportDataset> {
+  const [employees, leaves, documents, tasks, proposals] = await Promise.all([
+    db
+      .from("employees")
+      .select(
+        "id, status, hired_on, contract_end_on, contract_type, archived_at, department, site, manager_id, full_name, matricule, is_demo",
+      ),
+    db
+      .from("leave_absences")
+      .select("id, employee_id, type, start_on, end_on, status, created_at"),
+    db
+      .from("employee_documents")
+      .select("id, employee_id, kind, label, is_missing, expires_on"),
+    db.from("tasks").select("id, title, done, due_on, updated_at, created_at"),
+    db.from("action_proposals").select("id, title, status, created_at, decided_at"),
+  ]);
+
+  if (employees.error) throw new Error(employees.error.message);
+  if (leaves.error) throw new Error(leaves.error.message);
+  if (documents.error) throw new Error(documents.error.message);
+  if (tasks.error) throw new Error(tasks.error.message);
+  if (proposals.error) throw new Error(proposals.error.message);
+
+  return {
+    employees: (employees.data ?? []) as ReportDataset["employees"],
+    leaves: (leaves.data ?? []) as ReportDataset["leaves"],
+    documents: (documents.data ?? []) as ReportDataset["documents"],
+    tasks: (tasks.data ?? []) as ReportDataset["tasks"],
+    proposals: (proposals.data ?? []) as ReportDataset["proposals"],
+  };
 }
+
+const filtersSchema = z.object({
+  department: z.string().nullable().optional(),
+  site: z.string().nullable().optional(),
+  managerId: z.string().nullable().optional(),
+  contractType: z.string().nullable().optional(),
+});
+
+export type ReportFiltersInput = z.infer<typeof filtersSchema>;
 
 export const fetchReportDataset = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }): Promise<DatasetPayload> => {
+  .handler(async ({ context }) => {
     const db = context.supabase;
 
-    const [employees, leaves, documents, tasks, proposals, profileRes, rolesRes, orgRes] =
-      await Promise.all([
-        db
-          .from("employees")
-          .select(
-            "id, status, hired_on, contract_end_on, contract_type, archived_at, department, site, manager_id, full_name, matricule, is_demo",
-          ),
-        db
-          .from("leave_absences")
-          .select("id, employee_id, type, start_on, end_on, status, created_at"),
-        db
-          .from("employee_documents")
-          .select("id, employee_id, kind, label, is_missing, expires_on"),
-        db.from("tasks").select("id, title, done, due_on, updated_at, created_at"),
-        db
-          .from("action_proposals")
-          .select("id, title, status, created_at, decided_at"),
-        db.from("profiles").select("org_id").eq("id", context.userId).maybeSingle(),
-        db.from("user_roles").select("role").eq("user_id", context.userId),
-        db.from("organizations").select("name, is_demo").eq(
-          "id",
-          // current_org_id() est la source RLS : on interroge l'organisation du profil.
-          "",
-        ),
-      ]);
+    const [dataset, profileRes, rolesRes] = await Promise.all([
+      loadDataset(db, context.userId),
+      db.from("profiles").select("org_id").eq("id", context.userId).maybeSingle(),
+      db.from("user_roles").select("role").eq("user_id", context.userId),
+    ]);
+
+    if (profileRes.error) throw new Error(profileRes.error.message);
+    if (rolesRes.error) throw new Error(rolesRes.error.message);
 
     const orgId = profileRes.data?.org_id ?? null;
-    const orgQuery = orgId
+    const orgRes = orgId
       ? await db.from("organizations").select("name, is_demo").eq("id", orgId).maybeSingle()
       : null;
-
-    void orgRes; // requête factice retirée — l'organisation est lue au-dessus.
-
-    if (employees.error) throw new Error(employees.error.message);
-    if (leaves.error) throw new Error(leaves.error.message);
-    if (documents.error) throw new Error(documents.error.message);
-    if (tasks.error) throw new Error(tasks.error.message);
-    if (proposals.error) throw new Error(proposals.error.message);
-    if (rolesRes.error) throw new Error(rolesRes.error.message);
 
     const roles = (rolesRes.data ?? []).map((r) => r.role as string);
 
     return {
-      dataset: {
-        employees: (employees.data ?? []) as ReportDataset["employees"],
-        leaves: (leaves.data ?? []) as ReportDataset["leaves"],
-        documents: (documents.data ?? []) as ReportDataset["documents"],
-        tasks: (tasks.data ?? []) as ReportDataset["tasks"],
-        proposals: (proposals.data ?? []) as ReportDataset["proposals"],
-      },
-      orgName: orgQuery?.data?.name ?? null,
+      dataset,
+      orgName: orgRes?.data?.name ?? null,
       roles,
       canEdit: roles.some((role) => EDITOR_ROLES.has(role)),
     };
@@ -96,16 +102,12 @@ const saveInputSchema = z.object({
     "personnalisee",
   ]),
   custom: z
-    .object({ start: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), end: z.string().regex(/^\d{4}-\d{2}-\d{2}$/) })
-    .optional(),
-  filters: z
     .object({
-      department: z.string().nullable().optional(),
-      site: z.string().nullable().optional(),
-      managerId: z.string().nullable().optional(),
-      contractType: z.string().nullable().optional(),
+      start: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+      end: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     })
     .optional(),
+  filters: filtersSchema.optional(),
 });
 
 export const saveWeeklyReportDraft = createServerFn({ method: "POST" })
@@ -114,39 +116,51 @@ export const saveWeeklyReportDraft = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const db = context.supabase;
 
-    // Autorité serveur : recalcul complet du rapport depuis la base.
-    const computed = await computeFromDatabase(db, context.userId, data.template, data.preset, data.custom, data.filters ?? {});
+    const { data: profile } = await db
+      .from("profiles")
+      .select("org_id")
+      .eq("id", context.userId)
+      .maybeSingle();
+    const orgId = profile?.org_id;
+    if (!orgId) {
+      throw new Error("Aucune organisation rattachée à ce compte : rapport impossible.");
+    }
 
-    const { data: existing, error: existingError } = await db
-      .from("weekly_reports")
-      .select("id")
-      .match({
-        org_id: computed.orgId,
-        template: data.template,
-        period_start: computed.period.start,
-        period_end: computed.period.end,
-      });
-    if (existingError) throw new Error(existingError.message);
+    const dataset = await loadDataset(db, context.userId);
+    const periodPair = resolvePeriod(data.preset, new Date().toISOString().slice(0, 10), data.custom);
+    const computed = computeReport(dataset, periodPair.current, periodPair.previous, data.filters ?? {});
 
-    const version = (existing?.length ?? 0) + 1;
     const templateLabels: Record<typeof data.template, string> = {
       rh: "RH (détaillé)",
       manager: "Manager (équipe)",
       direction: "Direction (synthétique)",
     };
-    const title = `${computed.orgName ?? "Organisation"} — Rapport ${templateLabels[data.template]}`;
+
+    const { data: existing, error: existingError } = await db
+      .from("weekly_reports")
+      .select("id")
+      .match({
+        org_id: orgId,
+        template: data.template,
+        period_start: periodPair.current.start,
+        period_end: periodPair.current.end,
+      });
+    if (existingError) throw new Error(existingError.message);
+    const version = (existing?.length ?? 0) + 1;
+
+    const title = `Rapport ${templateLabels[data.template]} — ${periodPair.current.label}`;
 
     const { data: report, error: reportError } = await db
       .from("weekly_reports")
       .insert({
-        org_id: computed.orgId,
+        org_id: orgId,
         template: data.template,
         title,
-        period_label: computed.period.label,
-        period_start: computed.period.start,
-        period_end: computed.period.end,
-        previous_start: computed.previous.start,
-        previous_end: computed.previous.end,
+        period_label: periodPair.current.label,
+        period_start: periodPair.current.start,
+        period_end: periodPair.current.end,
+        previous_start: periodPair.previous.start,
+        previous_end: periodPair.previous.end,
         filters: data.filters ?? {},
         sources: computed.sources,
         status: "brouillon",
@@ -160,7 +174,7 @@ export const saveWeeklyReportDraft = createServerFn({ method: "POST" })
 
     const rows = computed.metrics.map((m) => ({
       report_id: report.id,
-      org_id: computed.orgId,
+      org_id: orgId,
       key: m.key,
       label: m.label,
       definition: m.definition,
@@ -181,15 +195,21 @@ export const saveWeeklyReportDraft = createServerFn({ method: "POST" })
     }
 
     await writeAudit({
-      orgId: computed.orgId,
+      orgId,
       actorId: context.userId,
       action: "Rapport hebdomadaire enregistré (brouillon)",
       resource: `weekly_reports/${report.id}`,
-      detail: `Modèle ${templateLabels[data.template]}, période ${computed.period.label}, version ${version}, marqueur démo : ${computed.isDemo ? "oui" : "non"}.`,
-      newValues: { template: data.template, period: computed.period, version },
+      detail: `Modèle ${templateLabels[data.template]}, période ${periodPair.current.label}, version ${version}, marqueur démo : ${computed.isDemo ? "oui" : "non"}.`,
+      newValues: { template: data.template, period: periodPair.current, version },
     });
 
-    return { id: report.id, version, periodLabel: computed.period.label, isDemo: computed.isDemo };
+    return {
+      id: report.id,
+      version,
+      periodLabel: periodPair.current.label,
+      isDemo: computed.isDemo,
+      title,
+    };
   });
 
 export const listWeeklyReports = createServerFn({ method: "GET" })
@@ -206,72 +226,5 @@ export const listWeeklyReports = createServerFn({ method: "GET" })
     return { reports: data ?? [] };
   });
 
-// --- helper serveur : lecture + calcul, partagé par la sauvegarde -----------
-
-async function computeFromDatabase(
-  db: Awaited<ReturnType<typeof createAuthDb>>,
-  userId: string,
-  template: "rh" | "manager" | "direction",
-  preset: PeriodPresetId,
-  custom: { start: string; end: string } | undefined,
-  filters: NonNullable<saveInputSchema["_output"]["filters"]>,
-) {
-  const { resolvePeriod } = await import("./periods");
-  const { computeReport } = await import("./kpi");
-
-  const { data: profile } = await db
-    .from("profiles")
-    .select("org_id")
-    .eq("id", userId)
-    .maybeSingle();
-  const orgId = profile?.org_id;
-  if (!orgId) throw new Error("Aucune organisation rattachée à ce compte : rapport impossible.");
-
-  const [{ data: org }, employeesRes, leavesRes, documentsRes, tasksRes, proposalsRes] =
-    await Promise.all([
-      db.from("organizations").select("name").eq("id", orgId).maybeSingle(),
-      db
-        .from("employees")
-        .select(
-          "id, status, hired_on, contract_end_on, contract_type, archived_at, department, site, manager_id, full_name, matricule, is_demo",
-        ),
-      db
-        .from("leave_absences")
-        .select("id, employee_id, type, start_on, end_on, status, created_at"),
-      db
-        .from("employee_documents")
-        .select("id, employee_id, kind, label, is_missing, expires_on"),
-      db.from("tasks").select("id, title, done, due_on, updated_at, created_at"),
-      db.from("action_proposals").select("id, title, status, created_at, decided_at"),
-    ]);
-
-  if (employeesRes.error) throw new Error(employeesRes.error.message);
-  if (leavesRes.error) throw new Error(leavesRes.error.message);
-  if (documentsRes.error) throw new Error(documentsRes.error.message);
-  if (tasksRes.error) throw new Error(tasksRes.error.message);
-  if (proposalsRes.error) throw new Error(proposalsRes.error.message);
-
-  const dataset: ReportDataset = {
-    employees: (employeesRes.data ?? []) as ReportDataset["employees"],
-    leaves: (leavesRes.data ?? []) as ReportDataset["leaves"],
-    documents: (documentsRes.data ?? []) as ReportDataset["documents"],
-    tasks: (tasksRes.data ?? []) as ReportDataset["tasks"],
-    proposals: (proposalsRes.data ?? []) as ReportDataset["proposals"],
-  };
-
-  const periodPair = resolvePeriod(preset, new Date().toISOString().slice(0, 10), custom);
-  const computed = computeReport(dataset, periodPair.current, periodPair.previous, filters ?? {});
-
-  return {
-    orgId,
-    orgName: org?.name ?? null,
-    period: periodPair.current,
-    previous: periodPair.previous,
-    metrics: computed.metrics,
-    sources: computed.sources,
-    isDemo: computed.isDemo,
-    template,
-  };
-}
-
-type createAuthDb = ReturnType<typeof requireSupabaseAuth> extends never ? never : never;
+export { periodPresetLabels };
+export type { Period, PeriodPresetId };
