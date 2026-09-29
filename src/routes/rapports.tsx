@@ -356,16 +356,18 @@ function RapportsPage() {
     setSaving(true);
     try {
       const result = await saveFn({
-        template,
-        preset,
-        ...(preset === "personnalisee"
-          ? { custom: { start: customStart, end: customEnd } }
-          : {}),
-        filters: {
-          department: department === "tous" ? null : department,
-          site: site === "tous" ? null : site,
-          managerId: managerId === "tous" ? null : managerId,
-          contractType: contractType === "tous" ? null : contractType,
+        data: {
+          template,
+          preset,
+          ...(preset === "personnalisee"
+            ? { custom: { start: customStart, end: customEnd } }
+            : {}),
+          filters: {
+            department: department === "tous" ? null : department,
+            site: site === "tous" ? null : site,
+            managerId: managerId === "tous" ? null : managerId,
+            contractType: contractType === "tous" ? null : contractType,
+          },
         },
       });
       toast.success(
