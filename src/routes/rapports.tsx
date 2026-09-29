@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery, useQueryClient, useServerFn } from "@tanstack/react-start/react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { AlertTriangle, Calculator, Database, FileDown, Info } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -47,11 +48,7 @@ import {
   listWeeklyReports,
   saveWeeklyReportDraft,
 } from "@/lib/reports/reports.functions";
-import {
-  formatMetricValue,
-  type ComputedReport,
-  type Metric,
-} from "@/lib/reports/kpi";
+import { computeReport, formatMetricValue, type ComputedReport, type Metric } from "@/lib/reports/kpi";
 import {
   periodPresetLabels,
   resolvePeriod,
