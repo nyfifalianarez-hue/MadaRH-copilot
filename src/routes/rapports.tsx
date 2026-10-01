@@ -721,3 +721,92 @@ function RapportsPage() {
     </div>
   );
 }
+
+type HistoryReport = {
+  id: string;
+  title: string;
+  is_demo: boolean;
+  period_label: string;
+  status: string;
+  version: number;
+  created_at: string;
+  filters: unknown;
+  sources: string[];
+};
+
+type StoredMetric = {
+  id: string;
+  label: string;
+  unit: string;
+  value: number | null;
+  numerator: number | null;
+  denominator: number | null;
+  formula: string;
+  source: string;
+  reliability: string;
+  comparison_note: string | null;
+};
+
+function HistoryRow({ row }: { row: HistoryReport }) {
+  const [open, setOpen] = useState(false);
+  const metricsFn = useServerFn(getWeeklyReportMetrics);
+  const metricsQuery = useQuery({
+    queryKey: ["rapport-metrics", row.id],
+    queryFn: () => metricsFn({ data: { reportId: row.id } }),
+    enabled: open,
+  });
+  const filters = Object.entries((row.filters ?? {}) as Record<string, unknown>).filter(
+    ([, v]) => v !== null && v !== undefined && v !== "",
+  );
+  const metrics: StoredMetric[] = metricsQuery.data?.metrics ?? [];
+  return (
+    <>
+      <TableRow className="cursor-pointer" onClick={() => setOpen((o) => !o)}>
+        <TableCell className="text-sm">
+          {open ? "▾ " : "▸ "}
+          {row.title}
+          {row.is_demo && (
+            <Badge variant="outline" className="ml-2 text-[10px]">
+              DONNÉES DE DÉMONSTRATION
+            </Badge>
+          )}
+        </TableCell>
+        <TableCell className="text-xs">{row.period_label}</TableCell>
+        <TableCell className="text-xs capitalize">{row.status}</TableCell>
+        <TableCell className="text-xs tabular-nums">v{row.version}</TableCell>
+        <TableCell className="text-xs">{new Date(row.created_at).toLocaleDateString("fr-FR")}</TableCell>
+      </TableRow>
+      {open && (
+        <TableRow>
+          <TableCell colSpan={5} className="space-y-2 bg-muted/40 text-xs whitespace-normal">
+            <p>
+              <span className="font-medium">Filtres : </span>
+              {filters.length === 0 ? "aucun" : filters.map(([k, v]) => `${k} = ${String(v)}`).join(" · ")}
+            </p>
+            <p>
+              <span className="font-medium">Sources : </span>
+              {row.sources.length === 0 ? "aucune" : row.sources.join(", ")}
+            </p>
+            {metricsQuery.isLoading && <p>Chargement des indicateurs…</p>}
+            {metricsQuery.error && <p className="text-destructive">Indicateurs non lisibles avec vos droits.</p>}
+            {metricsQuery.data && metrics.length === 0 && <p>Aucun indicateur enregistré.</p>}
+            {metrics.length > 0 && (
+              <ul className="space-y-1">
+                {metrics.map((m) => (
+                  <li key={m.id}>
+                    <span className="font-medium">{m.label}</span> :{" "}
+                    {m.value === null ? "Aucune donnée disponible pour cette période" : `${m.value} ${m.unit}`}
+                    {m.numerator !== null && m.denominator !== null && ` (${m.numerator} / ${m.denominator})`}
+                    {" — "}
+                    {m.formula} · source : {m.source} · fiabilité : {m.reliability}
+                    {m.comparison_note ? ` · ${m.comparison_note}` : ""}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </TableCell>
+        </TableRow>
+      )}
+    </>
+  );
+}
