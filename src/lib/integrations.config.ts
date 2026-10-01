@@ -2,7 +2,7 @@
  * Configuration des intégrations externes (sans secret) — importable côté navigateur.
  * Aucune donnée n'est simulée : chaque appel réel dépend d'une autorisation OAuth effective.
  */
-export type ProviderId = "slack" | "gmail" | "google_sheets" | "github";
+export type ProviderId = "slack" | "gmail" | "google_sheets" | "google_slides" | "github";
 
 export interface ProviderScope {
   scope: string;
@@ -59,6 +59,21 @@ export const providers: Record<ProviderId, ProviderConfig> = {
     ],
     healthCheckLabel: "Lecture du compte Google autorisé (userinfo)",
     dataPolicy: "Aucune écriture sans aperçu exact de la plage et des valeurs.",
+  },
+  google_slides: {
+    id: "google_slides",
+    label: "Google Slides",
+    description:
+      "Création d'une présentation du rapport hebdomadaire RH, uniquement après aperçu et confirmation explicite.",
+    requiredSecrets: ["GOOGLE_OAUTH_CLIENT_ID", "GOOGLE_OAUTH_CLIENT_SECRET"],
+    scopes: [
+      { scope: "https://www.googleapis.com/auth/presentations", purpose: "Créer la présentation confirmée", isWrite: true },
+      { scope: "https://www.googleapis.com/auth/drive.file", purpose: "Accéder uniquement aux fichiers créés par l'application", isWrite: true },
+      { scope: "https://www.googleapis.com/auth/userinfo.email", purpose: "Identifier le compte autorisé", isWrite: false },
+    ],
+    healthCheckLabel: "Lecture du compte Google autorisé (userinfo)",
+    dataPolicy:
+      "Indicateurs agrégés uniquement : aucune donnée médicale, disciplinaire ou salariale individuelle n'est envoyée. Aucun lien n'est affiché tant que l'API Google n'a pas réellement créé la présentation.",
   },
   github: {
     id: "github",
