@@ -46,6 +46,7 @@ import {
 import {
   fetchReportDataset,
   listWeeklyReports,
+  getWeeklyReportMetrics,
   saveWeeklyReportDraft,
 } from "@/lib/reports/reports.functions";
 import { computeReport, formatMetricValue, type ComputedReport, type Metric } from "@/lib/reports/kpi";
