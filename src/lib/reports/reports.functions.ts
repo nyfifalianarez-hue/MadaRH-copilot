@@ -232,5 +232,20 @@ export const listWeeklyReports = createServerFn({ method: "GET" })
     return { reports: data ?? [] };
   });
 
+export const getWeeklyReportMetrics = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ reportId: z.string().uuid() }).parse(data))
+  .handler(async ({ context, data }) => {
+    const { data: rows, error } = await context.supabase
+      .from("weekly_report_metrics")
+      .select(
+        "id, key, label, unit, value, numerator, denominator, formula, source, reliability, previous_value, comparison_note",
+      )
+      .eq("report_id", data.reportId)
+      .order("label");
+    if (error) throw new Error(error.message);
+    return { metrics: rows ?? [] };
+  });
+
 export { periodPresetLabels };
 export type { Period, PeriodPresetId };

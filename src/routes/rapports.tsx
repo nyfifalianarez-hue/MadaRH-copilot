@@ -708,22 +708,7 @@ function RapportsPage() {
                     </TableHeader>
                     <TableBody>
                       {historyQuery.data.reports.map((reportRow) => (
-                        <TableRow key={reportRow.id}>
-                          <TableCell className="text-sm">
-                            {reportRow.title}
-                            {reportRow.is_demo && (
-                              <Badge variant="outline" className="ml-2 text-[10px]">
-                                DONNÉES DE DÉMONSTRATION
-                              </Badge>
-                            )}
-                          </TableCell>
-                          <TableCell className="text-xs">{reportRow.period_label}</TableCell>
-                          <TableCell className="text-xs capitalize">{reportRow.status}</TableCell>
-                          <TableCell className="text-xs tabular-nums">v{reportRow.version}</TableCell>
-                          <TableCell className="text-xs">
-                            {new Date(reportRow.created_at).toLocaleDateString("fr-FR")}
-                          </TableCell>
-                        </TableRow>
+                        <HistoryRow key={reportRow.id} row={reportRow} />
                       ))}
                     </TableBody>
                   </Table>
