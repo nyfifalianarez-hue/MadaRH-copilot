@@ -18,3 +18,6 @@
   « Autorisation requise » et aucun lien n'est simulé tant qu'aucun test de lecture n'a réussi.
 - Intégrations Slack / Gmail / Google Sheets : flux OAuth prêts côté serveur ; clés à ajouter dans
   les réglages du projet.
+- Google Slides — EN ATTENTE : aucune connexion Google Slides n'existe dans l'espace de travail.
+  Manque : créer la connexion Google Slides (compte propriétaire), la lier au projet, puis
+  implémenter l'appel serveur de création + test de santé réel. Aucun lien n'est affiché d'ici là.

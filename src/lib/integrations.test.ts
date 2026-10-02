@@ -35,3 +35,17 @@ describe("configuration des intégrations", () => {
     expect(statusLabels).not.toHaveProperty("connecte");
   });
 });
+
+describe("Google Slides (rapport hebdomadaire)", () => {
+  it("demande des habilitations minimales, sans accès Drive complet", () => {
+    const scopes = providers.google_slides.scopes.map((s) => s.scope);
+    expect(scopes).toContain("https://www.googleapis.com/auth/presentations");
+    expect(scopes).toContain("https://www.googleapis.com/auth/drive.file");
+    expect(scopes).not.toContain("https://www.googleapis.com/auth/drive");
+  });
+
+  it("n'envoie que des indicateurs agrégés et n'affiche aucun lien simulé", () => {
+    expect(providers.google_slides.dataPolicy).toContain("agrégés");
+    expect(providers.google_slides.dataPolicy).toContain("Aucun lien");
+  });
+});
