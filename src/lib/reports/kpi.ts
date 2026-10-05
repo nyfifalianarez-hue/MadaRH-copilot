@@ -594,3 +594,11 @@ export function formatMetricValue(metric: Metric): string {
       return String(metric.value);
   }
 }
+
+/**
+ * Détail persisté dans l'historique : agrégé par défaut (aucun nom ni matricule).
+ * Le détail nominatif reste consultable en direct, sous RLS, depuis l'écran.
+ */
+export function toStoredDetail(detail: string[]): { count: number; nominatif: false } {
+  return { count: detail.length, nominatif: false };
+}

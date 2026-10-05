@@ -5,6 +5,7 @@ import {
   filterEmployees,
   formatMetricValue,
   scopeDataset,
+  toStoredDetail,
   type EmployeeRow,
   type ReportDataset,
 } from "./kpi";
@@ -248,5 +249,13 @@ describe("filtres de périmètre", () => {
     const scoped = scopeDataset(dataset, { department: "Logistique" });
     expect(scoped.employees).toHaveLength(1);
     expect(scoped.tasks).toHaveLength(0);
+  });
+});
+
+describe("historique — minimisation des données", () => {
+  it("le détail enregistré ne contient ni nom ni matricule", () => {
+    const stored = toStoredDetail(["MAT-1 · Salarié 1", "MAT-2 · Salarié 2"]);
+    expect(stored).toEqual({ count: 2, nominatif: false });
+    expect(JSON.stringify(stored)).not.toContain("MAT-");
   });
 });

@@ -15,7 +15,7 @@ import type { Database } from "@/integrations/supabase/types";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { writeAudit } from "@/lib/audit.server";
 
-import { computeReport, type ReportDataset } from "./kpi";
+import { computeReport, toStoredDetail, type ReportDataset } from "./kpi";
 import { periodPresetLabels, resolvePeriod, type Period, type PeriodPresetId } from "./periods";
 
 type AuthedDb = SupabaseClient<Database>;
@@ -193,7 +193,7 @@ export const saveWeeklyReportDraft = createServerFn({ method: "POST" })
       reliability: m.reliability,
       previous_value: m.previousValue,
       comparison_note: m.comparisonNote,
-      detail: { items: m.detail },
+      detail: toStoredDetail(m.detail),
     }));
     if (rows.length > 0) {
       const { error: metricsError } = await db.from("weekly_report_metrics").insert(rows);
