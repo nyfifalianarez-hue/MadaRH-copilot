@@ -71,7 +71,7 @@ function DocumentsPage() {
     const employee = employees.find((e) => e.id === employeeId);
     const rule = kind === "contrat" || kind === "avenant" ? ruleFor("contrat") : ruleFor("general");
     return [
-      `[BROUILLON — DONNÉES DE DÉMONSTRATION]`,
+      `[BROUILLON]`,
       `${documentKindLabels[kind]}`,
       `Organisation : ${organization.name} (${organization.country})`,
       `Collaborateur : ${employee?.fullName ?? "—"} — ${employee?.position ?? "—"}`,
@@ -237,7 +237,7 @@ function DocumentsPage() {
         {missing.length === 0 ? (
           <EmptyState
             title="Aucun document manquant"
-            description="Tous les documents DEMO suivis sont présents."
+            description="Tous les documents suivis sont présents."
           />
         ) : (
           <ul className="panel divide-y divide-border">

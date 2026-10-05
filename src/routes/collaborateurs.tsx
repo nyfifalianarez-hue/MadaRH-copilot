@@ -15,7 +15,7 @@ export const Route = createFileRoute("/collaborateurs")({
       {
         name: "description",
         content:
-          "Fiches collaborateurs DEMO : statut administratif, documents, données confidentielles masquées et historique.",
+          "Fiches collaborateurs : statut administratif, documents, données confidentielles masquées et historique.",
       },
       { property: "og:title", content: "Collaborateurs — MadaRH Compliance" },
       {
@@ -44,7 +44,7 @@ function EmployeesPage() {
     <div className="space-y-5">
       <PageHeader
         title="Collaborateurs"
-        description="Dossiers DEMO du personnel. Les données salariales, médicales et disciplinaires sont masquées par défaut et toute révélation est journalisée."
+        description="Dossiers du personnel. Les données salariales, médicales et disciplinaires sont masquées par défaut et toute révélation est journalisée."
       />
 
       <div className="flex flex-col gap-2 sm:flex-row">

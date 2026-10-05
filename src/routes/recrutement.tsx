@@ -12,7 +12,7 @@ export const Route = createFileRoute("/recrutement")({
       {
         name: "description",
         content:
-          "Suivi des candidatures DEMO et checklists d'onboarding : documents à collecter et étapes administratives.",
+          "Suivi des candidatures et checklists d'onboarding : documents à collecter et étapes administratives.",
       },
       { property: "og:title", content: "Recrutement & onboarding — MadaRH Compliance" },
       {
@@ -38,7 +38,7 @@ function RecruitmentPage() {
     <div className="space-y-5">
       <PageHeader
         title="Recrutement & onboarding"
-        description="Checklists DEMO par candidat. Les étapes ne sont jamais cochées automatiquement à la place d'un collègue."
+        description="Checklists par candidat. Les étapes ne sont jamais cochées automatiquement à la place d'un collègue."
       />
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         {candidates.map((candidate) => {

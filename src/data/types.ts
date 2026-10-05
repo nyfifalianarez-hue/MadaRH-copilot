@@ -10,7 +10,6 @@ export interface Organization {
   id: string;
   name: string;
   country: string;
-  demo: true;
 }
 
 export interface Profile {
@@ -207,6 +206,5 @@ export interface Settings {
   retentionMonths: number;
   maskConfidential: boolean;
   requireConfirmation: boolean;
-  demoMode: boolean;
   mfaReady: boolean;
 }

@@ -1,5 +1,5 @@
 /**
- * Couche de données DEMO + moteur de propositions.
+ * Couche de données locale + moteur de propositions.
  *
  * Principe : toute action externe ou modification de donnée passe par
  * analyse -> proposition -> prévisualisation -> confirmation -> exécution -> audit.
@@ -19,22 +19,22 @@ import {
 } from "react";
 
 import {
-  demoAudit,
-  demoCandidates,
-  demoDocuments,
-  demoEmployees,
-  demoGeneratedDocuments,
-  demoIntegrations,
-  demoLeaves,
-  demoOrganization,
-  demoProfile,
-  demoProposals,
-  demoRuleVersions,
-  demoRules,
-  demoSettings,
-  demoSources,
-  demoTasks,
-} from "./demo";
+  initialAudit,
+  initialCandidates,
+  initialDocuments,
+  initialEmployees,
+  initialGeneratedDocuments,
+  initialIntegrations,
+  initialLeaves,
+  initialOrganization,
+  initialProfile,
+  initialProposals,
+  initialRuleVersions,
+  initialRules,
+  initialSettings,
+  initialSources,
+  initialTasks,
+} from "./initial";
 import type {
   ActionProposal,
   AuditLog,
@@ -72,8 +72,8 @@ export type ProposalEffect =
   | { type: "publish_rule"; ruleId: string; statement: string; comment: string };
 
 interface StoreValue {
-  organization: typeof demoOrganization;
-  profile: typeof demoProfile;
+  organization: typeof initialOrganization;
+  profile: typeof initialProfile;
   employees: Employee[];
   documents: EmployeeDocument[];
   leaves: LeaveAbsence[];
@@ -102,19 +102,19 @@ let counter = 0;
 const nextId = (prefix: string) => `${prefix}-${Date.now().toString(36)}-${(counter += 1)}`;
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const [employees] = useState<Employee[]>(demoEmployees);
-  const [documents] = useState<EmployeeDocument[]>(demoDocuments);
-  const [leaves, setLeaves] = useState<LeaveAbsence[]>(demoLeaves);
-  const [legalRules, setLegalRules] = useState<LegalRule[]>(demoRules);
+  const [employees] = useState<Employee[]>(initialEmployees);
+  const [documents] = useState<EmployeeDocument[]>(initialDocuments);
+  const [leaves, setLeaves] = useState<LeaveAbsence[]>(initialLeaves);
+  const [legalRules, setLegalRules] = useState<LegalRule[]>(initialRules);
   const [legalRuleVersions, setLegalRuleVersions] =
-    useState<LegalRuleVersion[]>(demoRuleVersions);
-  const [tasks, setTasks] = useState<Task[]>(demoTasks);
-  const [proposals, setProposals] = useState<ActionProposal[]>(demoProposals);
-  const [auditLogs, setAuditLogs] = useState<AuditLog[]>(demoAudit);
+    useState<LegalRuleVersion[]>(initialRuleVersions);
+  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [proposals, setProposals] = useState<ActionProposal[]>(initialProposals);
+  const [auditLogs, setAuditLogs] = useState<AuditLog[]>(initialAudit);
   const [generatedDocuments, setGeneratedDocuments] =
-    useState<GeneratedDocument[]>(demoGeneratedDocuments);
-  const [candidates] = useState<Candidate[]>(demoCandidates);
-  const [settings, setSettings] = useState<Settings>(demoSettings);
+    useState<GeneratedDocument[]>(initialGeneratedDocuments);
+  const [candidates] = useState<Candidate[]>(initialCandidates);
+  const [settings, setSettings] = useState<Settings>(initialSettings);
   const [effects, setEffects] = useState<Record<string, ProposalEffect | undefined>>({});
 
   const appendAudit = useCallback((entry: Omit<AuditLog, "id" | "at" | "actor">) => {
@@ -122,7 +122,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       {
         id: nextId("aud"),
         at: new Date().toISOString(),
-        actor: demoProfile.fullName,
+        actor: initialProfile.fullName,
         ...entry,
       },
       ...prev,
@@ -185,7 +185,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           ),
         );
         setLegalRuleVersions((prev) => {
-          const rule = demoRules.find((r) => r.id === effect.ruleId);
+          const rule = initialRules.find((r) => r.id === effect.ruleId);
           return [
             {
               id: nextId("ver"),
@@ -194,7 +194,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
               statement: effect.statement,
               status: "a_verifier",
               changedAt: new Date().toISOString(),
-              changedBy: demoProfile.fullName,
+              changedBy: initialProfile.fullName,
               comment: effect.comment,
             },
             ...prev,
@@ -218,14 +218,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
                 ...p,
                 status: "confirme",
                 decidedAt: new Date().toISOString(),
-                decidedBy: demoProfile.fullName,
+                decidedBy: initialProfile.fullName,
               }
             : p,
         ),
       );
       appendAudit({
         action: proposal.requiresExternalCall
-          ? "Action externe confirmée (simulation DEMO)"
+          ? "Action externe en attente (intégration non connectée)"
           : "Proposition confirmée et exécutée",
         target: `${proposal.id} · ${proposal.title}`,
         sensitive: proposal.kind === "modification_donnee",
@@ -248,7 +248,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
                 ...p,
                 status: "rejete",
                 decidedAt: new Date().toISOString(),
-                decidedBy: demoProfile.fullName,
+                decidedBy: initialProfile.fullName,
               }
             : p,
         ),
@@ -308,18 +308,18 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<StoreValue>(
     () => ({
-      organization: demoOrganization,
-      profile: demoProfile,
+      organization: initialOrganization,
+      profile: initialProfile,
       employees,
       documents,
       leaves,
       legalRules,
       legalRuleVersions,
-      legalSources: demoSources,
+      legalSources: initialSources,
       tasks,
       proposals,
       auditLogs,
-      integrations: demoIntegrations,
+      integrations: initialIntegrations,
       generatedDocuments,
       candidates,
       settings,

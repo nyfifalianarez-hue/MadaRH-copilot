@@ -26,7 +26,7 @@ export const Route = createFileRoute("/conges")({
       {
         name: "description",
         content:
-          "Suivi DEMO des congés et absences : annuel, maternité, paternité, maladie, accident du travail. Durées issues de la bibliothèque juridique.",
+          "Suivi des congés et absences : annuel, maternité, paternité, maladie, accident du travail. Durées issues de la bibliothèque juridique.",
       },
       { property: "og:title", content: "Congés & absences — MadaRH Compliance" },
       {
@@ -103,7 +103,7 @@ function LeavesPage() {
       <LegalDisclaimer compact />
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Demandes DEMO" value={leaves.length} hint="Toutes périodes" />
+        <StatCard label="Demandes" value={leaves.length} hint="Toutes périodes" />
         <StatCard
           label="En attente"
           value={leaves.filter((l) => l.status === "en_attente").length}

@@ -143,9 +143,6 @@ function RootComponent() {
               <header className="sticky top-0 z-20 flex flex-col gap-2 border-b border-border bg-card/95 px-3 py-2 backdrop-blur sm:flex-row sm:items-center sm:gap-3 sm:px-4">
                 <div className="flex items-center gap-2">
                   <SidebarTrigger aria-label="Afficher ou masquer le menu" />
-                  <span className="rounded bg-warning/20 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-warning-foreground">
-                    Données DEMO
-                  </span>
                 </div>
                 <div className="sm:ml-auto">
                   <GlobalSearch />
@@ -156,7 +153,7 @@ function RootComponent() {
                 <Outlet />
               </main>
               <footer className="border-t border-border px-4 py-3 text-xs text-muted-foreground">
-                MadaRH Compliance · environnement de démonstration. Les informations juridiques sont
+                MadaRH Compliance. Les informations juridiques sont
                 documentaires et doivent être vérifiées sur la source officielle applicable.
               </footer>
             </div>

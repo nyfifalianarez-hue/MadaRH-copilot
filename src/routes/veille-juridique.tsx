@@ -92,7 +92,7 @@ function LegalPage() {
       <LegalDisclaimer />
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Règles suivies" value={legalRules.length} hint="Bibliothèque DEMO" />
+        <StatCard label="Règles suivies" value={legalRules.length} hint="Bibliothèque juridique" />
         <StatCard
           label="À vérifier"
           value={legalRules.filter((r) => r.status === "a_verifier").length}
