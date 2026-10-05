@@ -21,3 +21,4 @@
 - Google Slides — EN ATTENTE : aucune connexion Google Slides n'existe dans l'espace de travail.
   Manque : créer la connexion Google Slides (compte propriétaire), la lier au projet, puis
   implémenter l'appel serveur de création + test de santé réel. Aucun lien n'est affiché d'ici là.
+- [x] Historique des rapports : détail enregistré agrégé (compteurs), sans nom ni matricule.
