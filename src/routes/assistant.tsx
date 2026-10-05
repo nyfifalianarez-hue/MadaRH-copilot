@@ -175,7 +175,7 @@ function AssistantPage() {
               kind: "envoi_externe",
               title: "Relance des documents manquants",
               analysis:
-                "Des dossiers DEMO sont incomplets. Un message de relance est préparé ; il ne sera envoyé qu'après votre confirmation.",
+                "Des dossiers sont incomplets. Un message de relance est préparé ; il ne sera envoyé qu'après votre confirmation.",
               preview:
                 "Objet : Documents manquants\nBonjour, merci de transmettre les pièces manquantes de votre dossier.",
               target: "Gmail (intégration non connectée)",

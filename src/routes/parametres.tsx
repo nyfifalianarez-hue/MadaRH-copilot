@@ -35,10 +35,9 @@ interface WorkspaceSettings {
   settings: {
     retention_days: number;
     mask_sensitive_by_default: boolean;
-    demo_mode: boolean;
     locale: string;
   } | null;
-  organization: { name: string; country: string; is_demo: boolean } | null;
+  organization: { name: string; country: string; } | null;
 }
 
 function Row({ label, value }: { label: string; value: string }) {
@@ -103,11 +102,6 @@ function ParametresPage() {
               <>
                 <Row label="Organisation" value={data.organization.name} />
                 <Row label="Pays" value={data.organization.country} />
-                {data.organization.is_demo && (
-                  <Badge variant="outline" className="border-warning/40 text-warning-foreground">
-                    DONNÉES DE DÉMONSTRATION
-                  </Badge>
-                )}
               </>
             ) : (
               <p className="text-xs text-muted-foreground">
@@ -148,7 +142,6 @@ function ParametresPage() {
                 label="Masquage par défaut des données sensibles"
                 value={data.settings.mask_sensitive_by_default ? "Activé" : "Désactivé"}
               />
-              <Row label="Mode démo" value={data.settings.demo_mode ? "Activé" : "Désactivé"} />
               <Row label="Langue" value={data.settings.locale} />
             </div>
           )}

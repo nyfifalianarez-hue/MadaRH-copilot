@@ -42,7 +42,6 @@ describe("computeReport — base vide et périmètre vide", () => {
   it("déclare le rapport vide sans inventer de valeur", () => {
     const report = computeReport(emptyDataset, WEEK.current, WEEK.previous);
     expect(report.isEmpty).toBe(true);
-    expect(report.isDemo).toBe(false);
     for (const metric of report.metrics) {
       expect(metric.source).toBeTruthy();
       expect(metric.formula).toBeTruthy();
@@ -114,7 +113,7 @@ describe("computeReport — base vide et périmètre vide", () => {
   });
 });
 
-describe("computeReport — calculs réels sur un jeu de démonstration", () => {
+describe("computeReport — calculs sur un jeu d'essai de test", () => {
   const dataset: ReportDataset = {
     employees: [
       employee({ id: "1", hired_on: "2026-09-21" }),
@@ -220,14 +219,6 @@ describe("computeReport — calculs réels sur un jeu de démonstration", () => 
     expect(labels.some((l) => l.includes("1 demande(s) de congé en attente"))).toBe(true);
   });
 
-  it("le marqueur démo suit les données marquées comme telles", () => {
-    const demo: ReportDataset = {
-      ...dataset,
-      employees: dataset.employees.map((e, index) => (index === 0 ? { ...e, is_demo: true } : e)),
-    };
-    expect(computeReport(demo, WEEK.current, WEEK.previous).isDemo).toBe(true);
-    expect(computeReport(dataset, WEEK.current, WEEK.previous).isDemo).toBe(false);
-  });
 });
 
 describe("filtres de périmètre", () => {

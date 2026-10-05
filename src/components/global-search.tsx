@@ -78,7 +78,7 @@ export function GlobalSearch() {
               </CommandItem>
             ))}
           </CommandGroup>
-          <CommandGroup heading="Collaborateurs (DEMO)">
+          <CommandGroup heading="Collaborateurs">
             {employees.map((employee) => (
               <CommandItem
                 key={employee.id}

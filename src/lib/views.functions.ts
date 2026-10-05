@@ -49,12 +49,12 @@ export const fetchWorkspaceSettings = createServerFn({ method: "GET" })
     const [profileRes, rolesRes, settingsRes] = await Promise.all([
       db.from("profiles").select("id, org_id, full_name, email").eq("id", context.userId).maybeSingle(),
       db.from("user_roles").select("role").eq("user_id", context.userId),
-      db.from("settings").select("retention_days, mask_sensitive_by_default, demo_mode, locale").limit(1).maybeSingle(),
+      db.from("settings").select("retention_days, mask_sensitive_by_default, locale").limit(1).maybeSingle(),
     ]);
 
     const orgId = profileRes.data?.org_id ?? null;
     const orgRes = orgId
-      ? await db.from("organizations").select("name, country, is_demo").eq("id", orgId).maybeSingle()
+      ? await db.from("organizations").select("name, country").eq("id", orgId).maybeSingle()
       : null;
 
     return {

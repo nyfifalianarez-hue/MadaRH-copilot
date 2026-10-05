@@ -15,7 +15,7 @@ export const Route = createFileRoute("/collaborateurs/$id")({
       {
         name: "description",
         content:
-          "Fiche collaborateur DEMO : statut, documents, congés, données confidentielles masquées et historique d'audit.",
+          "Fiche collaborateur : statut, documents, congés, données confidentielles masquées et historique d'audit.",
       },
       { property: "og:title", content: "Fiche collaborateur — MadaRH Compliance" },
       {
@@ -36,7 +36,7 @@ function EmployeeDetail() {
     return (
       <EmptyState
         title="Collaborateur introuvable"
-        description="Ce dossier n'existe pas dans le jeu de données DEMO."
+        description="Ce dossier n'existe pas dans la base de données."
         action={
           <Button asChild variant="outline" size="sm">
             <Link to="/collaborateurs">Retour à la liste</Link>
@@ -132,7 +132,7 @@ function EmployeeDetail() {
         <div className="space-y-2">
           <h2 className="text-base font-semibold">Documents</h2>
           {empDocs.length === 0 ? (
-            <EmptyState title="Aucun document" description="Ce dossier DEMO ne contient encore aucune pièce." />
+            <EmptyState title="Aucun document" description="Ce dossier ne contient encore aucune pièce." />
           ) : (
             <div className="panel divide-y divide-border">
               {empDocs.map((doc) => (
