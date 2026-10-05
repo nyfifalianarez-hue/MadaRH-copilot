@@ -372,7 +372,7 @@ function RapportsPage() {
         },
       });
       toast.success(
-        `Brouillon enregistré : ${result.title}, version ${result.version}${result.isDemo ? " (DONNÉES DE DÉMONSTRATION)" : ""}.`,
+        `Brouillon enregistré : ${result.title}, version ${result.version}.`,
       );
       await queryClient.invalidateQueries({ queryKey: ["rapports-historique"] });
     } catch (error) {
@@ -532,17 +532,6 @@ function RapportsPage() {
 
           {report && (
             <>
-              {report.isDemo && (
-                <div className="panel border-warning/40 bg-warning/10 p-4 text-sm">
-                  <p className="font-medium text-warning-foreground">
-                    DONNÉES DE DÉMONSTRATION
-                  </p>
-                  <p className="text-warning-foreground/80">
-                    Au moins une ligne du périmètre est marquée comme donnée de démonstration.
-                    Ces chiffres ne doivent jamais être mélangés aux données réelles.
-                  </p>
-                </div>
-              )}
 
               {report.isEmpty ? (
                 <EmptyState
@@ -726,7 +715,6 @@ function RapportsPage() {
 type HistoryReport = {
   id: string;
   title: string;
-  is_demo: boolean;
   period_label: string;
   status: string;
   version: number;
@@ -766,11 +754,6 @@ function HistoryRow({ row }: { row: HistoryReport }) {
         <TableCell className="text-sm">
           {open ? "▾ " : "▸ "}
           {row.title}
-          {row.is_demo && (
-            <Badge variant="outline" className="ml-2 text-[10px]">
-              DONNÉES DE DÉMONSTRATION
-            </Badge>
-          )}
         </TableCell>
         <TableCell className="text-xs">{row.period_label}</TableCell>
         <TableCell className="text-xs capitalize">{row.status}</TableCell>

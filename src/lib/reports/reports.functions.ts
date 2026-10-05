@@ -28,7 +28,9 @@ async function loadDataset(db: AuthedDb, userId: string): Promise<ReportDataset>
       .from("employees")
       .select(
         "id, status, hired_on, contract_end_on, contract_type, archived_at, department, site, manager_id, full_name, matricule, is_demo",
-      ),
+      )
+      // Données réelles uniquement : toute ligne marquée de démonstration est exclue.
+      .eq("is_demo", false),
     db
       .from("leave_absences")
       .select("id, employee_id, type, start_on, end_on, status, created_at"),
@@ -79,7 +81,7 @@ export const fetchReportDataset = createServerFn({ method: "GET" })
 
     const orgId = profileRes.data?.org_id ?? null;
     const orgRes = orgId
-      ? await db.from("organizations").select("name, is_demo").eq("id", orgId).maybeSingle()
+      ? await db.from("organizations").select("name").eq("id", orgId).maybeSingle()
       : null;
 
     const roles = (rolesRes.data ?? []).map((r) => r.role as string);
@@ -171,7 +173,7 @@ export const saveWeeklyReportDraft = createServerFn({ method: "POST" })
         sources: computed.sources,
         status: "brouillon",
         version,
-        is_demo: computed.isDemo,
+        is_demo: false,
         author_id: context.userId,
       })
       .select("id")
@@ -205,7 +207,7 @@ export const saveWeeklyReportDraft = createServerFn({ method: "POST" })
       actorId: context.userId,
       action: "Rapport hebdomadaire enregistré (brouillon)",
       resource: `weekly_reports/${report.id}`,
-      detail: `Modèle ${templateLabels[data.template]}, période ${periodPair.current.label}, version ${version}, marqueur démo : ${computed.isDemo ? "oui" : "non"}.`,
+      detail: `Modèle ${templateLabels[data.template]}, période ${periodPair.current.label}, version ${version}.`,
       newValues: { template: data.template, period: periodPair.current, version },
     });
 
@@ -213,7 +215,6 @@ export const saveWeeklyReportDraft = createServerFn({ method: "POST" })
       id: report.id,
       version,
       periodLabel: periodPair.current.label,
-      isDemo: computed.isDemo,
       title,
     };
   });
@@ -224,7 +225,7 @@ export const listWeeklyReports = createServerFn({ method: "GET" })
     const { data, error } = await context.supabase
       .from("weekly_reports")
       .select(
-        "id, template, title, period_label, period_start, period_end, status, version, is_demo, created_at, author_id, filters, sources",
+        "id, template, title, period_label, period_start, period_end, status, version, created_at, author_id, filters, sources",
       )
       .order("created_at", { ascending: false })
       .limit(25);

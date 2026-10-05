@@ -476,8 +476,6 @@ export interface ComputedReport {
   previousPeriod: Period;
   openDays: number;
   calendarDays: number;
-  /** Vrai si au moins une ligne du périmètre est marquée comme donnée de démonstration. */
-  isDemo: boolean;
   /** Vrai si aucune donnée n'existe dans le périmètre : l'interface doit le dire explicitement. */
   isEmpty: boolean;
   sources: string[];
@@ -563,7 +561,6 @@ export function computeReport(
     previousPeriod,
     openDays: businessDays(period.start, period.end),
     calendarDays: daysInclusive(period.start, period.end),
-    isDemo: scoped.employees.some((e) => e.is_demo),
     isEmpty,
     sources: [
       "employees",
