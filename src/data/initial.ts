@@ -31,7 +31,7 @@ export const initialProfile: Profile = {
   id: "",
   fullName: "Utilisateur",
   email: "",
-  role: "collaborateur",
+  role: "lecteur",
   mfaEnabled: false,
 };
 
