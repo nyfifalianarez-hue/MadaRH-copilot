@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as AuditRouteImport } from './routes/audit'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CollaborateursRouteImport } from './routes/collaborateurs'
 import { Route as CongesRouteImport } from './routes/conges'
 import { Route as DocumentsRouteImport } from './routes/documents'
@@ -36,6 +37,11 @@ const AssistantRoute = AssistantRouteImport.update({
 const AuditRoute = AuditRouteImport.update({
   id: '/audit',
   path: '/audit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CollaborateursRoute = CollaborateursRouteImport.update({
@@ -93,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
   '/audit': typeof AuditRoute
+  '/auth': typeof AuthRoute
   '/collaborateurs': typeof CollaborateursRouteWithChildren
   '/conges': typeof CongesRoute
   '/documents': typeof DocumentsRoute
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
   '/audit': typeof AuditRoute
+  '/auth': typeof AuthRoute
   '/collaborateurs': typeof CollaborateursRouteWithChildren
   '/conges': typeof CongesRoute
   '/documents': typeof DocumentsRoute
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/assistant': typeof AssistantRoute
   '/audit': typeof AuditRoute
+  '/auth': typeof AuthRoute
   '/collaborateurs': typeof CollaborateursRouteWithChildren
   '/conges': typeof CongesRoute
   '/documents': typeof DocumentsRoute
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/'
     | '/assistant'
     | '/audit'
+    | '/auth'
     | '/collaborateurs'
     | '/conges'
     | '/documents'
@@ -156,6 +166,7 @@ export interface FileRouteTypes {
     | '/'
     | '/assistant'
     | '/audit'
+    | '/auth'
     | '/collaborateurs'
     | '/conges'
     | '/documents'
@@ -171,6 +182,7 @@ export interface FileRouteTypes {
     | '/'
     | '/assistant'
     | '/audit'
+    | '/auth'
     | '/collaborateurs'
     | '/conges'
     | '/documents'
@@ -187,6 +199,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AssistantRoute: typeof AssistantRoute
   AuditRoute: typeof AuditRoute
+  AuthRoute: typeof AuthRoute
   CollaborateursRoute: typeof CollaborateursRouteWithChildren
   CongesRoute: typeof CongesRoute
   DocumentsRoute: typeof DocumentsRoute
@@ -219,6 +232,13 @@ declare module '@tanstack/react-router' {
       path: '/audit'
       fullPath: '/audit'
       preLoaderRoute: typeof AuditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/collaborateurs': {
@@ -310,6 +330,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AssistantRoute: AssistantRoute,
   AuditRoute: AuditRoute,
+  AuthRoute: AuthRoute,
   CollaborateursRoute: CollaborateursRouteWithChildren,
   CongesRoute: CongesRoute,
   DocumentsRoute: DocumentsRoute,
