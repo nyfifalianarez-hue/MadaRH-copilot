@@ -144,8 +144,11 @@ function RootComponent() {
                 <div className="flex items-center gap-2">
                   <SidebarTrigger aria-label="Afficher ou masquer le menu" />
                 </div>
-                <div className="sm:ml-auto">
+                <div className="flex items-center gap-3 sm:ml-auto">
                   <GlobalSearch />
+                  <Link to="/auth" className="text-sm font-medium text-primary hover:underline">
+                    Compte
+                  </Link>
                 </div>
               </header>
               {/* Les routes enfants s'affichent ici. */}
