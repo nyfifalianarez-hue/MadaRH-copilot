@@ -1,39 +1,34 @@
-# Plan — Module « Rapport hebdomadaire RH » (état vérifié + implémentation)
+# Rapport hebdomadaire RH — corrections prioritaires de fiabilité
 
-## État réel vérifié (reconfirmer le 26/09)
+## Constats vérifiés
+- 17 indicateurs sont calculés par le serveur à partir de la base. Chacun indique sa formule, son numérateur, son dénominateur et sa source. La base est encore vide : aucun rapport réel n'a été produit.
+- Seule la lecture des collaborateurs exclut les lignes marquées « démo ». Les congés, documents, tâches et validations sont lus sans ce filtre. Ils peuvent donc compter des éléments liés à des collaborateurs exclus du rapport.
+- Le taux de rotation divise les départs par l'effectif actif en fin de période, et non par un effectif moyen. Ce choix n'est pas affiché comme une limite.
+- L'absentéisme ne déduit pas les jours fériés. Il est déjà marqué « partiel », ce qui est correct.
+- Tout nouveau compte reçoit d'abord le rôle « collaborateur ». Il devient administrateur RH seulement lors de sa première connexion par la page Compte. Ce parcours n'a jamais été testé avec un vrai compte.
+- Google Sheets : l'écran vérifie un statut « connecte » qui n'existe pas dans la liste des statuts. Le statut réel s'appelle « connecte_verifie ». L'écran affiche donc toujours « non connecté », ce qui est sûr mais incohérent.
+- Google Slides : le texte « Autorisation requise » est affiché et aucun lien n'est simulé. La table d'export existe. En revanche, rien ne prépare encore le contenu des diapositives ni les graphiques.
 
-**Ce qui existe déjà :**
-- Moteur KPI pur et complet (`src/lib/reports/kpi.ts`, `periods.ts`) : effectif actif, nouvelles recrues, départs, rotation, onboarding en cours, contrats à échéance, congés validés, absences, absentéisme (fiabilité partielle), congés en attente, documents manquants/expirés, complétude documentaire, tâches réalisées/en retard, validations en attente, délai moyen de validation. Comparaison à la période précédente, aucun pourcentage si dénominateur nul, indicateurs sans source déclarés « indisponibles », alertes critiques/attention, marquage DEMO.
-- Tables créées : `weekly_reports`, `weekly_report_metrics`, `weekly_report_exports` (statuts, rôles, versions, RLS par organisation, horodatages automatiques).
+## Corrections prioritaires
+1. **Cohérence des données** : ne compter les congés, documents et tâches que pour les collaborateurs réellement inclus dans le rapport, avec les mêmes filtres de service, de site et de manager.
+2. **Transparence des formules** : préciser la base du taux de rotation (effectif en fin de période) dans « Voir le calcul ». Marquer comme « partiel » tout indicateur au dénominateur incertain.
+3. **Tests** : ajouter des tests pour un collaborateur exclu, un congé non validé, un contrat sans fin, un salarié sans service, une période sans données et un dénominateur à zéro.
+4. **Google Sheets** : utiliser le vrai statut « Connecté et vérifié ». Aucune lecture ni écriture tant que la connexion n'est pas réelle.
+5. **Préparation de Google Slides, sans appel externe** :
+   - construire depuis le brouillon enregistré un aperçu local des diapositives pour chaque modèle (RH, Manager, Direction) : titre, période, auteur, cartes d'indicateurs, alertes ;
+   - préparer les graphiques à partir des seules valeurs enregistrées ;
+   - masquer un graphique dont la valeur ou la période précédente manque, avec la mention « Données insuffisantes » ;
+   - exclure toujours les données nominatives, médicales, disciplinaires et salariales ;
+   - afficher un écran listant exactement les données qui seraient envoyées. Le bouton « Créer dans Google Slides » reste désactivé avec la mention « Autorisation requise ».
+6. **Vérification de bout en bout** avec un vrai compte : connexion, création de l'espace, rapport vide, enregistrement d'un brouillon, historique, puis journal d'audit.
 
-**Ce qui manque (vérifié, y compris par le typecheck) :**
-- Erreurs de compilation actives : liens vers `/audit`, `/integrations`, `/parametres` dans la barre latérale et la recherche globale pointent vers des écrans inexistants ; deux accès d'index non sécurisés dans `src/routes/sheets.tsx` (lignes 51-52).
-- Aucun écran « Rapports RH » ni entrée de navigation.
-- Aucune fonction serveur de lecture des données ni d'enregistrement de rapport.
-- Base de données entièrement vide (0 ligne partout : organisation, profils, salariés, congés, intégrations). L'application tourne sur les données de démonstration côté navigateur ; le moteur KPI ne peut rien calculer depuis la base.
-- Flux Google Slides inexistant : aucun callback OAuth, aucune création réelle de présentation, aucun test de connexion.
-- Aucun test (vitest installé, aucun fichier de test).
+## Hors périmètre (bloqué)
+- **Création réelle des présentations Google Slides** : aucune connexion Google Slides n'existe dans l'espace de travail. La création, le vrai lien et le test de connexion viendront une fois la connexion faite.
+- **Lecture du Google Sheet réel** : non connecté.
 
-**BUILD possible maintenant : oui.** Aucun blocage technique ; le build passe avec des erreurs de typage à corriger au premier lancement. Aucune donnée ne sera simulée : les indicateurs resteront vides ou marqués DEMO tant que la base ne contient rien.
-
-## Plan d'implémentation (en mode Build)
-
-### Étape 0 — Déblocages pré-requis
-1. Créer les trois écrans manquants `/integrations`, `/audit`, `/parametres` (statuts honnêtes : « Non connecté », « Autorisation requise », jamais « connecté » sans test réel) et corriger les accès d'index de `sheets.tsx`.
-2. Enregistrer l'attachement de jeton authentifié dans `src/start.ts` (requis par les fonctions serveur du module).
-3. Migration unique de données de démonstration : organisation démo, salariés, congés, documents, tâches tous marqués « DONNÉES DE DÉMONSTRATION », référentiel des scopes d'intégration. Insérée dans la migration, jamais à la volée.
-
-### Étape 1 — Module Rapports RH
-4. Fonctions serveur : lecture du jeu de données du périmètre (filtrée par organisation), création du brouillon de rapport, historique.
-5. Écran `/rapports` : sélection de période (semaine courante / précédente / personnalisée / mois), filtres service / site / manager / type de contrat ; aperçu avec cartes KPI, graphiques, tableaux, alertes ; chaque KPI affiche « Voir le calcul » (numérateur, dénominateur, formule, source, période, comparaison, fiabilité) ; gestion du zéro et des données insuffisantes ; badge « DONNÉES DE DÉMONSTRATION » le cas échéant.
-6. Trois modèles : RH détaillé, Manager, Direction — mêmes données, aucun chiffre inventé.
-7. Brouillon enregistré dans `weekly_reports` + métriques ; historique complet ; RBAC/RLS existants conservés ; agrégation par défaut, aucune donnée individuelle sensible.
-
-### Étape 2 — Google Slides réel
-8. Flux d'autorisation Google côté serveur (secrets à ajouter dans Réglages → Secrets), état « Autorisation requise » tant qu'aucun test de lecture réel n'a réussi ; création réelle de présentation après confirmation explicite ; écriture dans `weekly_report_exports` ; jamais de lien simulé.
-
-### Étape 3 — Tests et vérification finale
-9. Tests : calculs KPI (zéro, période vide), permissions, Google non autorisé, propositions → confirmation → audit.
-10. Vérification : compilation sans erreur, navigation de tous les écrans, requêtes réelles, erreurs évidentes.
-
-Ordre et budget : Étapes 0 et 1 en priorité ; Étapes 2-3 selon budget restant (crédits quotidiens rechargés chaque jour).
+## Détails techniques
+- Dans `loadDataset`, filtrer les congés, documents et tâches sur les identifiants des collaborateurs retenus (et sur `is_demo = false` lorsque la colonne existe), dans `kpi.ts` ou dans la requête.
+- Nouveau module pur `src/lib/reports/slides-plan.ts` : rapport et indicateurs en entrée, liste de diapositives et données de graphiques en sortie (sans appel réseau), testé avec vitest.
+- Les graphiques seront plus tard des images publiques ou des tableaux natifs Slides ; ce choix sera fait au moment de la connexion.
+- `sheets.tsx` : remplacer `"connecte"` par `"connecte_verifie"`.
+- Aucune migration nécessaire.
