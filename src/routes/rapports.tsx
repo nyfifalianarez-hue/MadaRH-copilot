@@ -15,6 +15,7 @@ import {
   YAxis,
 } from "recharts";
 
+import { SlidesPreview } from "@/components/slides-preview";
 import { EmptyState, PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
