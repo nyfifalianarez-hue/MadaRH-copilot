@@ -120,17 +120,22 @@ export function filterEmployees(employees: EmployeeRow[], filters: ReportFilters
   });
 }
 
-/** Restreint le jeu de données au périmètre des salariés retenus par les filtres. */
+/**
+ * Restreint le jeu de données au périmètre des salariés retenus (filtres et
+ * exclusion des lignes non réelles). Congés et documents rattachés à un salarié
+ * hors périmètre sont toujours exclus ; un document sans salarié n'est conservé
+ * qu'en l'absence de filtre.
+ */
 export function scopeDataset(dataset: ReportDataset, filters: ReportFilters): ReportDataset {
   const employees = filterEmployees(dataset.employees, filters);
   const ids = new Set(employees.map((e) => e.id));
   const scoped = Object.values(filters).some((v) => v);
   return {
     employees,
-    leaves: scoped ? dataset.leaves.filter((l) => ids.has(l.employee_id)) : dataset.leaves,
-    documents: scoped
-      ? dataset.documents.filter((d) => d.employee_id && ids.has(d.employee_id))
-      : dataset.documents,
+    leaves: dataset.leaves.filter((l) => ids.has(l.employee_id)),
+    documents: dataset.documents.filter((d) =>
+      d.employee_id ? ids.has(d.employee_id) : !scoped,
+    ),
     // Les tâches et validations ne portent pas de rattachement salarié en base :
     // elles restent au périmètre de l'organisation et sont signalées comme telles.
     tasks: dataset.tasks,
@@ -239,9 +244,11 @@ function computeRaw(dataset: ReportDataset, period: Period): RawMetric[] {
     {
       key: "turnover",
       label: "Taux de rotation",
-      definition: "Départs de la période rapportés à l'effectif actif.",
+      definition:
+        "Départs de la période rapportés à l'effectif actif à la date de calcul (et non à un effectif moyen, non disponible en base).",
       unit: "pourcentage",
-      formula: "Départs ÷ effectif actif × 100",
+      formula: "Départs ÷ effectif actif à la date de calcul × 100",
+      reliability: "partielle",
       source: "Table employees",
       numerator: exits.length,
       denominator: active.length,
