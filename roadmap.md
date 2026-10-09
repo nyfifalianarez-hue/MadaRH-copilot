@@ -22,3 +22,4 @@
   Manque : créer la connexion Google Slides (compte propriétaire), la lier au projet, puis
   implémenter l'appel serveur de création + test de santé réel. Aucun lien n'est affiché d'ici là.
 - [x] Historique des rapports : détail enregistré agrégé (compteurs), sans nom ni matricule.
+- [x] Rapport : périmètre congés/documents, rotation « partielle », statut Sheets, plan local Slides (tests).

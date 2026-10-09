@@ -72,7 +72,7 @@ function SheetsPage() {
   const [range, setRange] = useState("A1");
 
   const sheetsIntegration = integrations.find((i) => i.id === "google_sheets");
-  const connected = sheetsIntegration?.status === "connecte";
+  const connected = (sheetsIntegration?.status as string | undefined) === "connecte_verifie";
   const pending = proposals.filter(
     (p) => p.kind === "ecriture_sheets" && p.status === "en_attente",
   );
