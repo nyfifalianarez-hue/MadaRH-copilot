@@ -663,14 +663,7 @@ function RapportsPage() {
                     </Button>
                   </div>
 
-                  <div className="panel space-y-2 p-4 text-sm">
-                    <p className="font-medium">Génération Google Slides — Autorisation requise</p>
-                    <p className="text-xs text-muted-foreground">
-                      Google Slides n'est pas connecté : aucune présentation n'est générée et aucun
-                      lien n'est produit tant qu'une autorisation Google réelle n'a pas réussi et
-                      que l'envoi n'a pas été confirmé explicitement. Aucun lien n'est jamais simulé.
-                    </p>
-                  </div>
+                  <SlidesPreview report={report} template={template} />
                 </>
               )}
 

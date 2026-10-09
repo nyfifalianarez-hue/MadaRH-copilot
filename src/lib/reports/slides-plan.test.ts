@@ -65,3 +65,31 @@ describe("plan local des diapositives", () => {
     expect(buildSlidesPlan({ template: "rh", periodLabel: "S41", author: "RH", metrics, slidesAuthorized: false }).slides).toHaveLength(4);
   });
 });
+
+describe("cas limites du rapport", () => {
+  const val = (ds: ReportDataset, k: string) =>
+    computeReport(ds, period, previous).metrics.find((m) => m.key === k);
+  const base = (over: Partial<ReportDataset>): ReportDataset => ({
+    employees: [], leaves: [], documents: [], tasks: [], proposals: [], ...over,
+  });
+
+  it("un congé non validé n'est pas compté en absence mais en attente", () => {
+    const ds = base({
+      employees: [emp("a", null)],
+      leaves: [{ id: "l", employee_id: "a", type: "maladie", start_on: "2026-10-06", end_on: "2026-10-07", status: "en_attente", created_at: "2026-10-01" }],
+    });
+    expect(val(ds, "absences_jours")?.value).toBe(0);
+    expect(val(ds, "conges_en_attente")?.value).toBe(1);
+  });
+  it("un contrat sans date de fin n'est pas à échéance", () => {
+    expect(val(base({ employees: [emp("a", null)] }), "contrats_a_echeance")?.value).toBe(0);
+  });
+  it("un salarié sans service reste dans l'effectif sans filtre", () => {
+    expect(val(base({ employees: [emp("a", null)] }), "effectif_actif")?.value).toBe(1);
+  });
+  it("dénominateur nul : aucun pourcentage", () => {
+    const m = val(base({}), "completude_documentaire");
+    expect(m?.value).toBeNull();
+    expect(m?.reliability).toBe("indisponible");
+  });
+});
