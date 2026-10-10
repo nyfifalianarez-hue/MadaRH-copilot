@@ -93,3 +93,34 @@ describe("cas limites du rapport", () => {
     expect(m?.reliability).toBe("indisponible");
   });
 });
+
+describe("confidentialité et honnêteté de l'aperçu", () => {
+  const ds: ReportDataset = {
+    employees: [{ ...emp("e1", "rh"), full_name: "Rakoto Jean", matricule: "MAT-001" }],
+    leaves: [], documents: [
+      { id: "d", employee_id: "e1", kind: "medical", label: "Certificat Rakoto", is_missing: true, expires_on: null },
+    ],
+    tasks: [], proposals: [],
+  };
+  const report = computeReport(ds, period, previous);
+  const plan = buildSlidesPlan({
+    template: "rh", periodLabel: period.label, author: "RH",
+    metrics: report.metrics.map((m) => ({ key: m.key, label: m.label, unit: m.unit, value: m.value, previous_value: m.previousValue })),
+    alerts: report.alerts.map((a) => a.label), slidesAuthorized: false,
+  });
+  const text = JSON.stringify(plan);
+
+  it("aucun nom, matricule ni libellé de document dans l'aperçu", () => {
+    expect(text).not.toContain("Rakoto");
+    expect(text).not.toContain("MAT-001");
+    expect(text).not.toContain("Certificat");
+  });
+  it("une valeur nulle reste « Donnée insuffisante », jamais 0", () => {
+    const bullet = plan.slides.flatMap((s) => s.bullets).find((b) => b.startsWith("Délai moyen de validation"));
+    expect(bullet).toBe("Délai moyen de validation : Donnée insuffisante");
+    expect(plan.slides.flatMap((s) => s.chart?.series ?? []).some((s) => s.label === "Délai moyen de validation")).toBe(false);
+  });
+  it("export désactivé sans autorisation vérifiée, même avec des données réelles", () => {
+    expect(plan.exportEnabled).toBe(false);
+  });
+});
