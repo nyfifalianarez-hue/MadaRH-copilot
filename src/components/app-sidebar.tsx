@@ -27,8 +27,9 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useStore } from "@/data/store";
-import { roleLabels } from "@/data/labels";
+import { useEffect, useState } from "react";
+
+import { supabase } from "@/integrations/supabase/client";
 
 const groups = [
   {
@@ -69,7 +70,12 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const pathname = useRouterState({ select: (r) => r.location.pathname });
-  const { profile } = useStore();
+  const [email, setEmail] = useState<string | null>(null);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setEmail(data.session?.user.email ?? null));
+    const { data } = supabase.auth.onAuthStateChange((_e, sess) => setEmail(sess?.user.email ?? null));
+    return () => data.subscription.unsubscribe();
+  }, []);
 
   const isActive = (url: string) =>
     url === "/" ? pathname === "/" : pathname === url || pathname.startsWith(`${url}/`);
@@ -83,7 +89,7 @@ export function AppSidebar() {
           </div>
           {!collapsed && (
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold">MadaRH Compliance</p>
+              <p className="truncate font-display text-[15px] font-semibold tracking-tight">MadaRH Compliance</p>
               <p className="truncate text-xs text-sidebar-foreground/70">Copilote RH · Madagascar</p>
             </div>
           )}
@@ -115,8 +121,14 @@ export function AppSidebar() {
       <SidebarFooter>
         {!collapsed && (
           <div className="rounded-md bg-sidebar-accent px-2 py-2 text-xs text-sidebar-accent-foreground">
-            <p className="font-medium">{profile.fullName}</p>
-            <p className="text-sidebar-foreground/70">{roleLabels[profile.role]}</p>
+            {email ? (
+              <>
+                <p className="truncate font-medium">{email}</p>
+                <Link to="/auth" className="text-sidebar-foreground/70 underline">Compte</Link>
+              </>
+            ) : (
+              <Link to="/auth" className="font-medium underline">Se connecter</Link>
+            )}
           </div>
         )}
       </SidebarFooter>
