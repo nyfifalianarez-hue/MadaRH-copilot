@@ -5,6 +5,7 @@
 - Conversations enregistrées (`chat_threads`, `chat_messages`, accès limité au propriétaire dans son organisation), historique, contexte conservé (30 derniers messages).
 - Contexte juridique : règles lues depuis la bibliothèque à chaque message ; sources réelles uniquement, classées « vérifiée / à vérifier » ; bibliothèque vide signalée explicitement.
 - Erreurs en français : connexion, configuration, crédits (402), refus (403), quota (429), service (5xx), réseau ; réessai et arrêt.
+- Menu : vrai compte connecté affiché (plus de « Utilisateur · Lecteur » fictif), nom en typographie serif.
 - Palette « registre institutionnel » appliquée à toute l'application ; état vide trompeur du tableau de bord corrigé.
 
 ## Tests
