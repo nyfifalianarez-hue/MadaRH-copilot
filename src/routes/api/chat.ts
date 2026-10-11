@@ -179,7 +179,7 @@ export const Route = createFileRoute("/api/chat")({
                   sources: sources as never,
                   model: CHAT_MODEL,
                 });
-                await db.from("chat_threads").update({ title: undefined }).eq("id", finalThread);
+                await db.from("chat_threads").update({ updated_at: new Date().toISOString() }).eq("id", finalThread);
                 send({ type: "done", threadId: finalThread });
               }
             } catch {

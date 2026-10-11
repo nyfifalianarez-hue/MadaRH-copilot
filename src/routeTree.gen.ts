@@ -22,6 +22,7 @@ import { Route as RapportsRouteImport } from './routes/rapports'
 import { Route as RecrutementRouteImport } from './routes/recrutement'
 import { Route as SheetsRouteImport } from './routes/sheets'
 import { Route as VeilleJuridiqueRouteImport } from './routes/veille-juridique'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as CollaborateursIdRouteImport } from './routes/collaborateurs.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -89,6 +90,11 @@ const VeilleJuridiqueRoute = VeilleJuridiqueRouteImport.update({
   path: '/veille-juridique',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CollaborateursIdRoute = CollaborateursIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -109,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/recrutement': typeof RecrutementRoute
   '/sheets': typeof SheetsRoute
   '/veille-juridique': typeof VeilleJuridiqueRoute
+  '/api/chat': typeof ApiChatRoute
   '/collaborateurs/$id': typeof CollaborateursIdRoute
 }
 export interface FileRoutesByTo {
@@ -125,6 +132,7 @@ export interface FileRoutesByTo {
   '/recrutement': typeof RecrutementRoute
   '/sheets': typeof SheetsRoute
   '/veille-juridique': typeof VeilleJuridiqueRoute
+  '/api/chat': typeof ApiChatRoute
   '/collaborateurs/$id': typeof CollaborateursIdRoute
 }
 export interface FileRoutesById {
@@ -142,6 +150,7 @@ export interface FileRoutesById {
   '/recrutement': typeof RecrutementRoute
   '/sheets': typeof SheetsRoute
   '/veille-juridique': typeof VeilleJuridiqueRoute
+  '/api/chat': typeof ApiChatRoute
   '/collaborateurs/$id': typeof CollaborateursIdRoute
 }
 export interface FileRouteTypes {
@@ -160,6 +169,7 @@ export interface FileRouteTypes {
     | '/recrutement'
     | '/sheets'
     | '/veille-juridique'
+    | '/api/chat'
     | '/collaborateurs/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -176,6 +186,7 @@ export interface FileRouteTypes {
     | '/recrutement'
     | '/sheets'
     | '/veille-juridique'
+    | '/api/chat'
     | '/collaborateurs/$id'
   id:
     | '__root__'
@@ -192,6 +203,7 @@ export interface FileRouteTypes {
     | '/recrutement'
     | '/sheets'
     | '/veille-juridique'
+    | '/api/chat'
     | '/collaborateurs/$id'
   fileRoutesById: FileRoutesById
 }
@@ -209,6 +221,7 @@ export interface RootRouteChildren {
   RecrutementRoute: typeof RecrutementRoute
   SheetsRoute: typeof SheetsRoute
   VeilleJuridiqueRoute: typeof VeilleJuridiqueRoute
+  ApiChatRoute: typeof ApiChatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -304,6 +317,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VeilleJuridiqueRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/collaborateurs/$id': {
       id: '/collaborateurs/$id'
       path: '/$id'
@@ -340,6 +360,7 @@ const rootRouteChildren: RootRouteChildren = {
   RecrutementRoute: RecrutementRoute,
   SheetsRoute: SheetsRoute,
   VeilleJuridiqueRoute: VeilleJuridiqueRoute,
+  ApiChatRoute: ApiChatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
