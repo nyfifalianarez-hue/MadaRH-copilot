@@ -65,39 +65,39 @@
 
 :root {
   --radius: 0.5rem;
-  --background: oklch(0.985 0.004 250);
-  --foreground: oklch(0.24 0.03 255);
-  --card: oklch(1 0 0);
+  --background: oklch(0.975 0.012 85);
+  --foreground: oklch(0.26 0.03 250);
+  --card: oklch(0.993 0.006 85);
   --card-foreground: oklch(0.24 0.03 255);
-  --popover: oklch(1 0 0);
+  --popover: oklch(0.993 0.006 85);
   --popover-foreground: oklch(0.24 0.03 255);
-  --primary: oklch(0.44 0.09 245);
+  --primary: oklch(0.36 0.05 250);
   --primary-foreground: oklch(0.99 0.004 250);
-  --secondary: oklch(0.945 0.012 250);
+  --secondary: oklch(0.94 0.014 85);
   --secondary-foreground: oklch(0.3 0.04 252);
-  --muted: oklch(0.955 0.008 250);
-  --muted-foreground: oklch(0.52 0.025 254);
-  --accent: oklch(0.93 0.035 195);
-  --accent-foreground: oklch(0.3 0.05 230);
+  --muted: oklch(0.95 0.012 85);
+  --muted-foreground: oklch(0.5 0.025 250);
+  --accent: oklch(0.93 0.04 155);
+  --accent-foreground: oklch(0.32 0.07 155);
   --destructive: oklch(0.55 0.19 25);
   --destructive-foreground: oklch(0.99 0.004 250);
-  --success: oklch(0.55 0.12 155);
+  --success: oklch(0.5 0.11 155);
   --success-foreground: oklch(0.99 0.004 250);
-  --warning: oklch(0.72 0.14 75);
-  --warning-foreground: oklch(0.26 0.05 70);
+  --warning: oklch(0.58 0.13 45);
+  --warning-foreground: oklch(0.99 0.005 85);
   --info: oklch(0.6 0.09 230);
   --info-foreground: oklch(0.99 0.004 250);
-  --border: oklch(0.9 0.012 252);
-  --input: oklch(0.9 0.012 252);
-  --ring: oklch(0.55 0.08 240);
-  --chart-1: oklch(0.44 0.09 245);
+  --border: oklch(0.88 0.016 85);
+  --input: oklch(0.86 0.018 85);
+  --ring: oklch(0.5 0.1 155);
+  --chart-1: oklch(0.36 0.05 250);
   --chart-2: oklch(0.55 0.12 155);
-  --chart-3: oklch(0.72 0.14 75);
+  --chart-3: oklch(0.58 0.13 45);
   --chart-4: oklch(0.55 0.19 25);
   --chart-5: oklch(0.6 0.09 230);
-  --sidebar: oklch(0.27 0.035 255);
+  --sidebar: oklch(0.25 0.03 250);
   --sidebar-foreground: oklch(0.93 0.01 250);
-  --sidebar-primary: oklch(0.72 0.1 210);
+  --sidebar-primary: oklch(0.74 0.1 155);
   --sidebar-primary-foreground: oklch(0.2 0.03 255);
   --sidebar-accent: oklch(0.34 0.04 255);
   --sidebar-accent-foreground: oklch(0.98 0.004 250);
@@ -179,4 +179,50 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-panel);
+}
+
+/* Registre institutionnel : cartes ivoire, filet fin, ombre discrète. */
+@utility ledger-card {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 1px 0 oklch(0.26 0.03 250 / 0.04), 0 12px 32px -16px oklch(0.26 0.03 250 / 0.18);
+}
+
+@utility ledger-kicker {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-success);
+}
+
+@utility ledger-dots {
+  display: inline-block;
+  width: 1.5rem;
+  height: 0.375rem;
+  background: radial-gradient(circle, var(--color-muted-foreground) 45%, transparent 50%) 0 0 / 0.5rem 100% repeat-x;
+  animation: ledger-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes ledger-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+/* Rendu Markdown des réponses de l'assistant. */
+@utility prose-ledger {
+  line-height: 1.65;
+  & p { margin: 0.5rem 0; }
+  & h1, & h2, & h3 { font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; margin: 1rem 0 0.35rem; }
+  & ul { list-style: disc; padding-left: 1.25rem; margin: 0.4rem 0; }
+  & ol { list-style: decimal; padding-left: 1.25rem; margin: 0.4rem 0; }
+  & li { margin: 0.15rem 0; }
+  & strong { font-weight: 600; }
+  & a { text-decoration: underline; color: var(--color-primary); }
+  & code { font-family: ui-monospace, monospace; font-size: 0.8rem; background: var(--color-muted); padding: 0.1rem 0.3rem; border-radius: 0.25rem; }
+  & pre { background: var(--color-muted); padding: 0.75rem; border-radius: var(--radius-md); overflow-x: auto; }
+  & table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; font-size: 0.8rem; }
+  & th, & td { border: 1px solid var(--color-border); padding: 0.3rem 0.5rem; text-align: left; }
+  & blockquote { border-left: 3px solid var(--color-success); padding-left: 0.75rem; color: var(--color-muted-foreground); }
 }
