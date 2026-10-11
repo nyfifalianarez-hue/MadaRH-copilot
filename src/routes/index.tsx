@@ -157,7 +157,11 @@ function Dashboard() {
             <FileWarning className="size-4 text-destructive" /> Documents manquants
           </h2>
           {missingDocs.length === 0 ? (
-            <EmptyState title="Aucune donnée disponible" description="Aucun document n'est encore enregistré : la complétude des dossiers ne peut pas être évaluée." />
+            documents.length === 0 ? (
+              <EmptyState title="Aucune donnée disponible" description="Aucun document n'est encore enregistré : la complétude des dossiers ne peut pas être évaluée." />
+            ) : (
+              <EmptyState title="Dossiers complets" description="Aucun document manquant parmi les documents enregistrés." />
+            )
           ) : (
             <div className="panel divide-y divide-border">
               {missingDocs.map((doc) => (
