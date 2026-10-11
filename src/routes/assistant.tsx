@@ -44,6 +44,8 @@ const suggestions = [
   "Rédige un courriel de relance pour des documents manquants.",
   "Quelle est la durée du congé de maternité à Madagascar ?",
   "Écris une formule Google Sheets pour compter les absences par service.",
+  "Quelles démarches CNaPS et OSTIE prévoir lors d'une embauche ?",
+  "Aide-moi à structurer une procédure d'accueil d'un nouveau salarié.",
 ];
 
 function useSession() {
